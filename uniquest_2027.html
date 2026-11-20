@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniQuest 2027: Phòng Thi Ảo Chuẩn Bộ GD&ĐT & Chiến Lược Nguyện Vọng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+            cyber: ['"Chakra Petch"', 'sans-serif'],
+          },
+          colors: {
+            darkBg: '#090d16',
+            cardBg: '#111827',
+            neonCyan: '#22d3ee',
+            neonPink: '#f472b6',
+            neonGreen: '#34d399',
+            neonYellow: '#fbbf24'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #090d16;
+      color: #f8fafc;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    .breathing-orb {
+      animation: breatheCycle 8s infinite ease-in-out;
+    }
+    @keyframes breatheCycle {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      40% { transform: scale(1.45); opacity: 1; }
+      75% { transform: scale(1.45); opacity: 0.95; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Toast Message Box -->
+  <div id="gameToastBox" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Top HUD -->
+  <header class="sticky top-0 z-30 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-slate-950 font-cyber font-extrabold text-lg shadow-md">
+          UQ
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-cyber font-bold text-base sm:text-lg text-white tracking-wide">UNIQUEST 2027</h1>
+            <span class="px-2 py-0.5 rounded-full bg-cyan-950 text-neonCyan border border-cyan-500/40 text-[10px] font-bold">Chuẩn Khảo Thí Bộ GD&ĐT</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Phòng Thi Ảo 10 Môn (Cấu Trúc 2+2) & Thuật Toán Lọc Ảo Quốc Gia</p>
+        </div>
+      </div>
+
+      <!-- Status Indicators -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-heart-pulse text-rose-400"></i>
+          <span class="text-slate-400">Căng thẳng:</span>
+          <strong id="hudStressVal" class="text-rose-400 font-mono">25%</strong>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-brain text-neonCyan"></i>
+          <span class="text-slate-400">Tập trung:</span>
+          <strong id="hudFocusVal" class="text-neonCyan font-mono">85%</strong>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-neonYellow"></i>
+          <span class="text-slate-400">Điểm JOMO:</span>
+          <strong id="hudJomoVal" class="text-neonYellow font-mono">120</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-5">
+
+    <!-- Primary Feature Tabs -->
+    <nav class="flex gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs font-bold">
+      <button onclick="switchScreen('cbt')" id="tabBtnCbt" class="px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 shadow-md flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-desktop"></i>
+        <span>1. Phòng Thi Ảo Chuẩn Bộ GD&ĐT (Đủ 10 Môn)</span>
+      </button>
+
+      <button onclick="switchScreen('nv')" id="tabBtnNv" class="px-4 py-2.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 hover:border-emerald-500/50 hover:text-neonGreen shadow-md flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-list-ol"></i>
+        <span>2. Đăng Ký Nguyện Vọng & Thuật Toán Lọc Ảo Quốc Gia</span>
+      </button>
+
+      <button onclick="switchScreen('rpg')" id="tabBtnRpg" class="px-4 py-2.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 hover:border-cyan-500/50 hover:text-neonCyan shadow-md flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>3. Đấu Trường Quy Chế Tuyển Sinh & 20 Tình Huống Thực Chiến THPTQG</span>
+      </button>
+
+      <button onclick="switchScreen('arcade')" id="tabBtnArcade" class="px-4 py-2.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 hover:border-pink-500/50 hover:text-neonPink shadow-md flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>4. Minigame Luyện Tập Trung Phòng Thi</span>
+      </button>
+    </nav>
+
+    <!-- ==================== SCREEN 1: PHÒNG THI ẢO CHUẨN BỘ GD&ĐT (10 MÔN) ==================== -->
+    <section id="screenCbt" class="space-y-4">
+      <!-- Subject Selector & Exam Controls -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-cardBg border border-slate-800 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-neonCyan">Hệ thống Khảo thí Trực tuyến • Cấu trúc Đề thi Mới 2026–2027</span>
+            <h2 class="font-cyber font-bold text-lg sm:text-xl text-white mt-0.5">Chọn Môn Thi Trong Kỳ Thi Tốt Nghiệp THPT 2+2</h2>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="cbtSubjectSelect" onchange="loadCbtExam(this.value)" class="rounded-xl bg-slate-900 border border-cyan-500/50 px-3.5 py-2 text-xs sm:text-sm font-bold text-white outline-none">
+              <option value="TOAN">1. Toán học (90 phút • 22 câu chuẩn)</option>
+              <option value="VAN">2. Ngữ văn (120 phút • Tự luận Đọc hiểu & Viết)</option>
+              <option value="ANH">3. Tiếng Anh (50 phút • 40 câu trắc nghiệm mới)</option>
+              <option value="LY">4. Vật lí (50 phút • 28 câu: 18 TN + 4 Đ/S + 6 TLN)</option>
+              <option value="HOA">5. Hóa học (50 phút • 28 câu: 18 TN + 4 Đ/S + 6 TLN)</option>
+              <option value="SINH">6. Sinh học (50 phút • 28 câu: 18 TN + 4 Đ/S + 6 TLN)</option>
+              <option value="SU">7. Lịch sử (50 phút • 28 câu: 24 TN + 4 Đ/S)</option>
+              <option value="DIA">8. Địa lí (50 phút • 28 câu: 18 TN + 4 Đ/S + 6 TLN)</option>
+              <option value="GDKT">9. GDKT & Pháp luật (50 phút • 28 câu: 24 TN + 4 Đ/S)</option>
+              <option value="TIN">10. Tin học (50 phút • 28 câu: 24 TN + 4 Đ/S)</option>
+            </select>
+
+            <button onclick="openBreathingModal()" class="px-3.5 py-2 rounded-xl bg-indigo-950 hover:bg-indigo-900 text-indigo-200 border border-indigo-500/50 text-xs font-bold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-lungs text-neonCyan"></i> Thở 4-7-8 Hạ Stress
+            </button>
+          </div>
+        </div>
+
+        <!-- Exam Meta & Timer Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
+          <div class="space-y-1">
+            <div id="cbtExamTitle" class="font-bold text-sm text-white">Đề thi thử chuẩn cấu trúc Bộ GD&ĐT – Môn Toán học</div>
+            <div id="cbtExamStructure" class="text-[11px] text-slate-400">Phần I: 12 câu TN (3,0đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (3,0đ)</div>
+            <div id="cbtMatrixBadge" class="inline-flex flex-wrap items-center gap-2 text-[10px] font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg">
+              Ma trận chuẩn GDPT 2018: 40% Nhận biết • 30% Thông hiểu • 30% Vận dụng
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-amber-500/40 font-mono text-sm font-bold text-neonYellow flex items-center gap-2">
+              <i class="fa-solid fa-clock"></i>
+              <span id="cbtTimerDisplay">90:00</span>
+            </div>
+            <button onclick="gradeCbtExam()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-extrabold text-xs shadow-md transition">
+              Nộp Bài & Chấm Điểm
+            </button>
+          </div>
+        </div>
+
+        <!-- Score Result Banner (Shown after grading) -->
+        <div id="cbtResultBanner" class="hidden p-4 rounded-2xl bg-emerald-950/70 border border-emerald-500/50 space-y-2"></div>
+
+        <!-- Exam Workspace: Left Questions + Right OMR Navigator -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <!-- Questions Container -->
+          <div id="cbtQuestionsList" class="lg:col-span-8 space-y-4 max-h-[65vh] overflow-y-auto pr-1 custom-scrollbar"></div>
+
+          <!-- Right Panel: OMR Answer Sheet & Recorded Scores -->
+          <div class="lg:col-span-4 space-y-4">
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-white uppercase tracking-wider">Phiếu Trả Lời Điện Tử (OMR)</span>
+                <span id="cbtAnsweredCount" class="text-xs font-mono text-neonCyan font-bold">0/22 câu</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Nhấn vào số câu để nhảy nhanh. Nhấn biểu tượng cờ ở từng câu để đánh dấu xem lại.</p>
+              <div id="cbtOmrGrid" class="grid grid-cols-5 sm:grid-cols-6 gap-1.5"></div>
+            </div>
+
+            <!-- Saved Exam Scores Card -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-neonGreen uppercase tracking-wider">Bảng Điểm Đã Lưu (Đồng Bộ Nguyện Vọng)</span>
+                <button onclick="switchScreen('nv')" class="text-[11px] text-neonCyan hover:underline font-bold">Sang Đặt NV →</button>
+              </div>
+              <div id="savedScoresSummary" class="space-y-1.5 text-xs text-slate-300"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: ĐĂNG KÝ NGUYỆN VỌNG & THUẬT TOÁN LỌC ẢO ==================== -->
+    <section id="screenNv" class="hidden space-y-4">
+      <div class="p-5 sm:p-6 rounded-3xl bg-cardBg border border-emerald-500/40 shadow-2xl space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-neonGreen">Mô phỏng Cổng Thông Tin Tuyển Sinh Bộ GD&ĐT</span>
+            <h2 class="font-cyber font-bold text-lg sm:text-xl text-white mt-0.5">Đăng Ký Nguyện Vọng Trực Tuyến & Chạy Thuật Toán Lọc Ảo Quốc Gia</h2>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <select id="nvComboSelect" onchange="updateAdmissionScoreSummary()" class="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-white font-bold">
+              <option value="A00">Tổ hợp A00 (Toán, Vật lí, Hóa học)</option>
+              <option value="A01">Tổ hợp A01 (Toán, Vật lí, Tiếng Anh)</option>
+              <option value="B00">Tổ hợp B00 (Toán, Hóa học, Sinh học)</option>
+              <option value="C00">Tổ hợp C00 (Ngữ văn, Lịch sử, Địa lí)</option>
+              <option value="D01">Tổ hợp D01 (Toán, Ngữ văn, Tiếng Anh)</option>
+            </select>
+            <div class="px-3.5 py-2 rounded-xl bg-emerald-950 border border-emerald-500/40 text-neonGreen font-bold">
+              Tổng điểm xét tuyển 2027: <span id="nvTotalScoreDisplay" class="font-mono text-sm">24.75</span> đ
+            </div>
+          </div>
+        </div>
+
+        <!-- Circular 95/2026/TT-BGDĐT Compliance Strip -->
+        <div class="p-3.5 rounded-2xl bg-indigo-950/50 border border-indigo-500/40 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] text-indigo-100">
+          <div><strong class="text-neonCyan">Thông tư 95/2026 (2027):</strong> Mỗi ngành tối đa <strong>03 phương thức</strong>; nguồn tuyển tối thiểu <strong>15,0đ/3 môn</strong>.</div>
+          <div><strong class="text-neonYellow">Trần điểm cộng 0,50đ:</strong> Tổng điểm cộng chứng chỉ, giải thưởng tối đa <strong>0,50/30đ</strong> (bỏ hẳn từ 2028).</div>
+          <div><strong class="text-neonGreen">Quy tắc đồng điểm:</strong> Bằng điểm cuối danh sách ưu tiên người xếp <strong>thứ tự nguyện vọng cao hơn</strong>.</div>
+        </div>
+
+        <!-- Score Source Notice -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="text-slate-300">
+            <i class="fa-solid fa-circle-info text-neonCyan mr-1"></i>
+            Tự động đồng bộ điểm bài thi ở <strong>Phòng Thi Ảo (Tab 1)</strong> (mặc định 8,25đ/môn nếu chưa thi thử).
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <label class="text-slate-400">Ưu tiên KV/ĐT:</label>
+              <select id="nvPriorityBonus" onchange="updateAdmissionScoreSummary()" class="rounded-lg bg-slate-950 border border-slate-700 px-2 py-1 text-white font-mono">
+                <option value="0">0.00 đ (KV3)</option>
+                <option value="0.25">0.25 đ (KV2)</option>
+                <option value="0.50">0.50 đ (KV2-NT)</option>
+                <option value="0.75">0.75 đ (KV1)</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <label class="text-slate-400">Điểm cộng (Trần 0,50đ):</label>
+              <select id="nvEncourageBonus" onchange="updateAdmissionScoreSummary()" class="rounded-lg bg-slate-950 border border-cyan-500/40 px-2 py-1 text-neonCyan font-mono">
+                <option value="0">0.00 đ (Không cộng)</option>
+                <option value="0.25">0.25 đ (IELTS 6.0 / Giải tỉnh)</option>
+                <option value="0.50">0.50 đ (Trần Thông tư 95/2026)</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <label class="text-slate-400">Học lực lớp 12:</label>
+              <select id="nvGrade12Rank" onchange="updateAdmissionScoreSummary()" class="rounded-lg bg-slate-950 border border-slate-700 px-2 py-1 text-white font-semibold">
+                <option value="TOT">Mức Tốt (Giỏi)</option>
+                <option value="KHA">Mức Khá</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Source Notice -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="text-slate-300">
+            <i class="fa-solid fa-circle-info text-neonCyan mr-1"></i>
+            Hệ thống tự động lấy điểm bài thi bạn vừa làm ở <strong>Phòng Thi Ảo (Tab 1)</strong> (nếu môn nào chưa thi thử sẽ lấy điểm mặc định 8,25đ/môn).
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-slate-400">Điểm ưu tiên KV/ĐT:</label>
+            <select id="nvPriorityBonus" onchange="updateAdmissionScoreSummary()" class="rounded-lg bg-slate-950 border border-slate-700 px-2 py-1 text-white font-mono">
+              <option value="0">0.00 đ (KV3)</option>
+              <option value="0.25">0.25 đ (KV2)</option>
+              <option value="0.50">0.50 đ (KV2-NT)</option>
+              <option value="0.75">0.75 đ (KV1)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <!-- Left: Available Majors Catalog -->
+          <div class="lg:col-span-6 space-y-3">
+            <h3 class="font-bold text-sm text-white flex items-center justify-between">
+              <span>Danh sách 10 Mã Ngành / Trường Đang Mở Đăng Ký</span>
+              <span class="text-[11px] text-slate-400 font-normal">Bấm "+ Thêm NV" để đưa vào danh sách</span>
+            </h3>
+            <div id="nvAvailableMajorsList" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar"></div>
+          </div>
+
+          <!-- Right: Student's Ordered Aspirations (NV1 - NV5) -->
+          <div class="lg:col-span-6 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm text-neonYellow">Phiếu Đăng Ký Nguyện Vọng (Tối đa 5 NV ưu tiên từ trên xuống)</h3>
+                <span id="nvSelectedCount" class="text-xs font-mono text-slate-400">0 / 5 NV</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Quy tắc Bộ GD&ĐT: Hệ thống xét từ <strong>NV1</strong> xuống dưới. Nếu đã trúng tuyển NV trên thì tự động dừng xét các NV sau.</p>
+
+              <div id="nvOrderedList" class="space-y-2 min-h-[200px]"></div>
+            </div>
+
+            <div class="space-y-3 pt-3 border-t border-slate-800">
+              <button onclick="runNationalVirtualFilter()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-microchip"></i> CHẠY THUẬT TOÁN LỌC ẢO QUỐC GIA & XEM KẾT QUẢ TRÚNG TUYỂN
+              </button>
+              <div id="nvFilterResultBox" class="hidden p-4 rounded-2xl bg-slate-950 border border-cyan-500/40 text-xs space-y-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: ĐẤU TRƯỜNG QUY CHẾ & TÌNH HUỐNG THỰC CHIẾN THPTQG ==================== -->
+    <section id="screenRpg" class="hidden space-y-4">
+      <div class="p-5 sm:p-7 rounded-3xl bg-cardBg border border-cyan-500/40 shadow-2xl space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-cyber font-bold bg-cyan-950 text-neonCyan border border-cyan-500/40">Bộ 20 Tình Huống Thực Chiến Chuẩn Bộ GD&ĐT</span>
+              <span id="rpgDomainBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-500/40">Chuyên đề: Tổ hợp 2+2 & Ngưỡng sàn</span>
+            </div>
+            <h2 id="rpgChapterTitle" class="font-cyber font-bold text-base sm:text-lg text-white mt-1.5">Tình huống 1/20: Bài Toán Tổ Hợp Môn Xét Tuyển 2+2 & Ràng Buộc Ngưỡng Đầu Vào</h2>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-amber-500/40 font-cyber text-xs text-neonYellow font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-stopwatch"></i>
+              <span id="tacticTimerDisplay">30s</span>
+            </div>
+            <span class="px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 font-mono text-xs text-neonGreen font-bold">Điểm Thực Chiến: <span id="tacticScoreDisplay">0</span>/200</span>
+            <span id="rpgStepBadge" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 font-mono text-xs text-slate-300">Câu 1 / 20</span>
+          </div>
+        </div>
+
+        <!-- Scenario Filter / Quick Jump Pills -->
+        <div id="rpgQuickPills" class="flex flex-wrap gap-1.5"></div>
+
+        <div id="rpgStoryBox" class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-sm text-slate-200 leading-relaxed"></div>
+
+        <div id="rpgChoicesBox" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+        <div id="rpgFeedbackBox" class="hidden p-4 rounded-2xl bg-slate-950 border border-emerald-500/40 text-xs space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 4: MINIGAME ARCADE ==================== -->
+    <section id="screenArcade" class="hidden space-y-4">
+      <div class="p-5 sm:p-6 rounded-3xl bg-cardBg border border-pink-500/40 shadow-2xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-neonPink">Rèn Luyện Sức Bền Nhận Thức</span>
+            <h2 class="font-cyber font-bold text-lg text-white">Lá Chắn Chống Nhiễu Thông Tin Mùa Thi</h2>
+            <p class="text-xs text-slate-400">Di chuyển thanh chắn (chuột hoặc chạm tay) để hứng các <strong>Kiến thức Trọng tâm (Xanh)</strong> và chặn đứng <strong>Tin đồn Gây nhiễu (Đỏ)</strong>.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 font-mono text-xs text-neonCyan font-bold">Điểm Arcade: <span id="arcadeScoreVal">0</span></span>
+            <button onclick="startArcadeMiniGame()" class="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs">Chơi Lại</button>
+          </div>
+        </div>
+
+        <div class="w-full h-[360px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 relative">
+          <canvas id="arcadeCanvas" class="w-full h-full block"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 4-7-8 Breathing Modal -->
+  <div id="breathingModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="max-w-md w-full p-6 rounded-3xl bg-slate-900 border border-cyan-500/40 text-center space-y-5 shadow-2xl">
+      <h3 class="font-cyber font-bold text-lg text-white">Kỹ Thuật Thở 4-7-8 Ổn Định Nhịp Tim Phòng Thi</h3>
+      <p class="text-xs text-slate-400">Hít vào bằng mũi (4 giây) → Giữ hơi (7 giây) → Thở ra chậm rãi (8 giây) để kích hoạt hệ thần kinh đối giao cảm.</p>
+      <div class="py-6 flex justify-center">
+        <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-500 breathing-orb flex items-center justify-center text-slate-950 font-extrabold text-xs shadow-lg shadow-cyan-500/30">
+          Hít – Giữ – Thở
+        </div>
+      </div>
+      <button onclick="completeBreathingExercise()" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs">
+        Hoàn Tất & Hạ 15% Căng Thẳng Phòng Thi
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. GLOBAL GAME STATE
+    // =========================================================================
+    const gameState = {
+      stress: 25,
+      focus: 85,
+      jomo: 120,
+      savedScores: {
+        TOAN: 8.5,
+        VAN: 8.0,
+        ANH: 8.25,
+        LY: 8.25,
+        HOA: 8.0,
+        SINH: 8.0,
+        SU: 8.25,
+        DIA: 8.25,
+        GDKT: 8.5,
+        TIN: 8.5
+      },
+      selectedNvIds: ["NV_BK_CNTT", "NV_UET_KTPM", "NV_FTU_KTQT", "NV_VINH_CNTT"]
+    };
+
+    function showGameToast(title, msg, type = "info") {
+      const box = document.getElementById("gameToastBox");
+      const el = document.createElement("div");
+      const border = type === "success" ? "border-emerald-500" : type === "warn" ? "border-amber-500" : "border-cyan-500";
+      el.className = `pointer-events-auto p-3.5 rounded-2xl bg-slate-900/95 border ${border} text-xs text-white shadow-xl space-y-1`;
+      el.innerHTML = `<div class="font-bold">${title}</div><div class="text-slate-300">${msg}</div>`;
+      box.appendChild(el);
+      setTimeout(() => { if (el.parentElement) el.remove(); }, 4000);
+    }
+
+    function updateHud() {
+      gameState.stress = Math.max(0, Math.min(100, gameState.stress));
+      gameState.focus = Math.max(0, Math.min(100, gameState.focus));
+      document.getElementById("hudStressVal").textContent = `${gameState.stress}%`;
+      document.getElementById("hudFocusVal").textContent = `${gameState.focus}%`;
+      document.getElementById("hudJomoVal").textContent = gameState.jomo;
+    }
+
+    function switchScreen(screenKey) {
+      ["cbt", "nv", "rpg", "arcade"].forEach(k => {
+        const sec = document.getElementById("screen" + k.charAt(0).toUpperCase() + k.slice(1));
+        const btn = document.getElementById("tabBtn" + k.charAt(0).toUpperCase() + k.slice(1));
+        if (k === screenKey) {
+          sec.classList.remove("hidden");
+          btn.className = "px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 shadow-md flex items-center gap-2 whitespace-nowrap transition";
+        } else {
+          sec.classList.add("hidden");
+          btn.className = "px-4 py-2.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 hover:border-cyan-500/50 hover:text-neonCyan shadow-md flex items-center gap-2 whitespace-nowrap transition";
+        }
+      });
+
+      if (screenKey === "nv") {
+        renderNvCatalogAndOrder();
+        updateAdmissionScoreSummary();
+      } else if (screenKey === "rpg") {
+        renderRpgScenario();
+      } else if (screenKey === "arcade") {
+        startArcadeMiniGame();
+      }
+    }
+
+    function openBreathingModal() {
+      document.getElementById("breathingModal").classList.remove("hidden");
+    }
+
+    function completeBreathingExercise() {
+      document.getElementById("breathingModal").classList.add("hidden");
+      gameState.stress = Math.max(5, gameState.stress - 15);
+      gameState.focus = Math.min(100, gameState.focus + 10);
+      gameState.jomo += 10;
+      updateHud();
+      showGameToast("Đã ổn định tâm lý phòng thi", "Nhịp tim đã hạ nhiệt (-15% Căng thẳng, +10% Tập trung).", "success");
+    }
+
+    // =========================================================================
+    // 2. PHÒNG THI ẢO CHUẨN BỘ GD&ĐT CHO 10 MÔN THI
+    // =========================================================================
+    const subjectMeta = {
+      TOAN: { name: "Toán học", minutes: 90, structure: "Phần I: 12 câu TN (3,0đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (3,0đ)", matrix: "Ma trận Bộ GD&ĐT: 9 câu Nhận biết (40%) • 7 câu Thông hiểu (30%) • 6 câu Vận dụng (30%)", totalQ: 22 },
+      VAN: { name: "Ngữ văn", minutes: 120, structure: "Phần I: Đọc hiểu ngữ liệu ngoài SGK (5 câu – 4,0đ) • Phần II: Viết đoạn & bài nghị luận (2 câu – 6,0đ)", matrix: "Ma trận Ngữ liệu ngoài SGK: Nhận biết (1,0đ) • Thông hiểu (2,0đ) • Vận dụng (1,0đ) • Viết NLXH & NLVH (6,0đ)", totalQ: 7 },
+      ANH: { name: "Tiếng Anh", minutes: 50, structure: "40 câu trắc nghiệm định dạng mới (Thông báo/Tờ rơi, Sắp xếp hội thoại/đoạn văn, Đọc điền & Đọc hiểu – 10,0đ)", matrix: "Ma trận Ngoại ngữ 2018: 16 câu Nhận biết (40%) • 12 câu Thông hiểu (30%) • 12 câu Vận dụng (30%)", totalQ: 40 },
+      LY: { name: "Vật lí", minutes: 50, structure: "Phần I: 18 câu TN (4,5đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (1,5đ)", matrix: "Ma trận Vật lí 12: Vật lí nhiệt • Khí lí tưởng • Từ trường • Vật lí hạt nhân (40% NB - 30% TH - 30% VD)", totalQ: 28 },
+      HOA: { name: "Hóa học", minutes: 50, structure: "Phần I: 18 câu TN (4,5đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (1,5đ)", matrix: "Ma trận Hóa học 12: Este-Lipit • Cacbohidrat • Amin-Peptit • Polime • Pin điện & Điện phân • Kim loại", totalQ: 28 },
+      SINH: { name: "Sinh học", minutes: 50, structure: "Phần I: 18 câu TN (4,5đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (1,5đ)", matrix: "Ma trận Sinh học 12: Di truyền phân tử & NST • Quy luật di truyền • Tiến hóa • Sinh thái học", totalQ: 28 },
+      SU: { name: "Lịch sử", minutes: 50, structure: "Phần I: 24 câu Trắc nghiệm nhiều lựa chọn (6,0đ) • Phần II: 4 câu Trắc nghiệm Đúng/Sai lũy tiến (4,0đ)", matrix: "Ma trận Lịch sử 12: Thế giới trong & sau Chiến tranh lạnh • ASEAN • Cách mạng tháng Tám & Kháng chiến • Đổi mới", totalQ: 28 },
+      DIA: { name: "Địa lí", minutes: 50, structure: "Phần I: 18 câu TN (4,5đ) • Phần II: 4 câu Đúng/Sai lũy tiến (4,0đ) • Phần III: 6 câu Trả lời ngắn (1,5đ)", matrix: "Ma trận Địa lí 12: Địa lí tự nhiên • Dân cư • Chuyển dịch cơ cấu kinh tế • Vùng kinh tế & Biển đảo", totalQ: 28 },
+      GDKT: { name: "GDKT & Pháp luật", minutes: 50, structure: "Phần I: 24 câu Trắc nghiệm nhiều lựa chọn (6,0đ) • Phần II: 4 câu Trắc nghiệm Đúng/Sai lũy tiến (4,0đ)", matrix: "Ma trận GDKT&PL 12: Tăng trưởng & Phát triển kinh tế • Hội nhập • Bảo hiểm & An sinh • Quyền công dân & Pháp luật quốc tế", totalQ: 28 },
+      TIN: { name: "Tin học", minutes: 50, structure: "Phần I: 24 câu Trắc nghiệm nhiều lựa chọn (6,0đ) • Phần II: 4 câu Trắc nghiệm Đúng/Sai lũy tiến (4,0đ)", matrix: "Ma trận Tin học 12: Trí tuệ nhân tạo • Mạng máy tính & Internet • Đạo đức số • Thiết kế Web HTML/CSS • CSDL", totalQ: 28 }
+    };
+
+    const seedQuestions = {
+      TOAN: [
+        { type: "MCQ", level: "Nhận biết", topic: "Ứng dụng đạo hàm", q: "Cho hàm số y = x³ - 3x + 2. Giá trị cực đại của hàm số đã cho bằng bao nhiêu?", opts: ["A. 4", "B. 0", "C. -1", "D. 1"], ans: 0, exp: "y' = 3x² - 3 = 0 ⇔ x = ±1. Tại x = -1, y_CĐ = (-1)³ - 3(-1) + 2 = 4." },
+        { type: "MCQ", level: "Nhận biết", topic: "Hình học Oxyz", q: "Trong không gian Oxyz, vectơ pháp tuyến của mặt phẳng (P): 2x - y + 3z - 5 = 0 là:", opts: ["A. (2; 1; 3)", "B. (2; -1; 3)", "C. (-2; -1; 3)", "D. (2; -1; -5)"], ans: 1, exp: "Hệ số của x, y, z lần lượt là (2; -1; 3)." },
+        { type: "MCQ", level: "Nhận biết", topic: "Nguyên hàm - Tích phân", q: "Họ nguyên hàm của hàm số f(x) = 3x² + cos x là:", opts: ["A. x³ + sin x + C", "B. x³ - sin x + C", "C. 6x - sin x + C", "D. x³ + cos x + C"], ans: 0, exp: "∫(3x² + cos x)dx = x³ + sin x + C." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Thống kê mẫu số liệu ghép nhóm", q: "Khoảng biến thiên R của mẫu số liệu ghép nhóm có đầu mút trái nhóm đầu tiên là a₁ = 10 và đầu mút phải nhóm cuối cùng là aₖ₊₁ = 60 bằng:", opts: ["A. 70", "B. 50", "C. 35", "D. 25"], ans: 1, exp: "Khoảng biến thiên R = aₖ₊₁ - a₁ = 60 - 10 = 50." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Cấp số nhân", q: "Cho cấp số nhân (uₙ) với u₁ = 2 và công bội q = 3. Giá trị của u₄ bằng:", opts: ["A. 18", "B. 54", "C. 24", "D. 162"], ans: 1, exp: "u₄ = u₁.q³ = 2 × 3³ = 54." },
+        { type: "MCQ", level: "Vận dụng", topic: "Bất phương trình mũ & logarit", q: "Tập nghiệm của bất phương trình log₂(x - 1) < 3 là:", opts: ["A. (-∞; 9)", "B. (1; 9)", "C. (1; 7)", "D. (0; 9)"], ans: 1, exp: "Điều kiện x > 1; log₂(x - 1) < 3 ⇔ x - 1 < 8 ⇔ x < 9. Vậy S = (1; 9)." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Khảo sát hàm số mũ", q: "Cho hàm số f(x) = e^(2x) - 2x. Xét tính đúng sai của các mệnh đề sau:", subs: ["a) f(0) = 1.", "b) Đạo hàm f'(x) = 2e^(2x) - 2.", "c) Hàm số đồng biến trên khoảng (-∞; 0).", "d) Giá trị nhỏ nhất của f(x) trên ℝ bằng 1."], ans: [true, true, false, true], exp: "f'(x)=0 ⇔ x=0; f'(x)<0 trên (-∞;0) nên nghịch biến; min f(x) = f(0) = 1." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Xác suất có điều kiện", q: "Một lớp có 60% học sinh thích môn Toán, 50% thích môn Vật lí và 30% thích cả hai môn. Chọn ngẫu nhiên 1 học sinh:", subs: ["a) Xác suất chọn được học sinh thích Toán là 0,6.", "b) Xác suất chọn được học sinh thích ít nhất một trong hai môn là 0,8.", "c) Xác suất học sinh đó thích Vật lí biết rằng bạn đó thích Toán là 0,5.", "d) Xác suất học sinh đó không thích cả hai môn là 0,3."], ans: [true, true, true, false], exp: "P(A∪B) = 0,6 + 0,5 - 0,3 = 0,8; P(B|A) = 0,3/0,6 = 0,5; P(không thích cả 2) = 1 - 0,8 = 0,2." },
+        { type: "SHORT", level: "Vận dụng", topic: "Tổ hợp - Xác suất", q: "Một hộp chứa 5 bi xanh và 4 bi đỏ. Lấy ngẫu nhiên đồng thời 2 bi. Xác suất để lấy được 2 bi khác màu bằng bao nhiêu (làm tròn đến hàng phần trăm)?", ans: "0,56", exp: "P = (5×4) / C(9,2) = 20 / 36 = 5/9 ≈ 0,56." },
+        { type: "SHORT", level: "Vận dụng", topic: "Ứng dụng tích phân tính diện tích", q: "Diện tích hình phẳng giới hạn bởi đồ thị hàm số y = x² - 4x + 3 và trục hoành Ox bằng bao nhiêu (làm tròn đến hàng phần trăm)?", ans: "1,33", exp: "Nghiệm x=1, x=3; S = ∫₁³ |x² - 4x + 3|dx = 4/3 ≈ 1,33." },
+        { type: "SHORT", level: "Vận dụng", topic: "Khoảng cách trong không gian Oxyz", q: "Trong không gian Oxyz, khoảng cách từ điểm M(1; 2; -1) đến mặt phẳng (P): 2x - 2y + z + 5 = 0 bằng bao nhiêu (làm tròn đến hàng phần trăm)?", ans: "0,67", exp: "d(M,(P)) = |2(1) - 2(2) + (-1) + 5| / √(4+4+1) = 2 / 3 ≈ 0,67." }
+      ],
+      LY: [
+        { type: "MCQ", level: "Nhận biết", topic: "Khí lí tưởng", q: "Trong quá trình đẳng nhiệt của một lượng khí lí tưởng xác định, đại lượng nào sau đây không đổi?", opts: ["A. Thể tích", "B. Áp suất", "C. Nhiệt độ tuyệt đối", "D. Khối lượng riêng"], ans: 2, exp: "Quá trình đẳng nhiệt giữ nhiệt độ tuyệt đối T không đổi." },
+        { type: "MCQ", level: "Nhận biết", topic: "Vật lí nhiệt", q: "Trong hệ SI, đơn vị của nhiệt dung riêng là:", opts: ["A. J/kg", "B. J/(kg.K)", "C. J/K", "D. W/m²"], ans: 1, exp: "Nhiệt dung riêng c = Q / (m.ΔT) có đơn vị J/(kg.K)." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Vật lí hạt nhân", q: "Hạt nhân nguyên tử ²³⁵₉₂U có số nơtron bằng bao nhiêu?", opts: ["A. 92", "B. 235", "C. 143", "D. 327"], ans: 2, exp: "Số nơtron N = A - Z = 235 - 92 = 143." },
+        { type: "MCQ", level: "Vận dụng", topic: "Từ trường & Lực từ", q: "Một đoạn dây dẫn thẳng dài 0,5 m mang dòng điện 4 A đặt vuông góc với đường sức từ của từ trường đều có cảm ứng từ B = 0,2 T. Lực từ tác dụng lên đoạn dây có độ lớn là:", opts: ["A. 0,4 N", "B. 4,0 N", "C. 0,1 N", "D. 0,8 N"], ans: 0, exp: "F = B.I.l.sin90° = 0,2 × 4 × 0,5 × 1 = 0,4 N." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Cảm ứng điện từ", q: "Một khung dây dẫn phẳng diện tích 20 cm² đặt trong từ trường đều B = 0,5 T. Xét các phát biểu:", subs: ["a) Từ thông cực đại qua khung dây là 10⁻³ Wb.", "b) Khi mặt phẳng khung song song với đường sức từ thì từ thông bằng 0.", "c) Đơn vị của từ thông là Tesla (T).", "d) Nếu từ thông biến thiên đều thì trong khung xuất hiện dòng điện cảm ứng."], ans: [true, true, false, true], exp: "Φ_max = B.S = 0,5 × 20.10⁻⁴ = 10⁻³ Wb; đơn vị từ thông là Weber (Wb)." },
+        { type: "SHORT", level: "Vận dụng", topic: "Nhiệt nóng chảy riêng", q: "Nhiệt nóng chảy riêng của nước đá là 3,34.10⁵ J/kg. Nhiệt lượng cần thiết để làm nóng chảy hoàn toàn 2 kg nước đá ở 0°C bằng bao nhiêu kJ?", ans: "668", exp: "Q = λ.m = 3,34.10⁵ × 2 = 668.000 J = 668 kJ." },
+        { type: "SHORT", level: "Vận dụng", topic: "Định luật Charles", q: "Một khối khí lí tưởng ở 27°C có thể tích 6 lít. Khi nung nóng đẳng áp khối khí đến 127°C thì thể tích của khối khí bằng bao nhiêu lít?", ans: "8", exp: "V₁/T₁ = V₂/T₂ ⇔ 6 / (27+273) = V₂ / (127+273) ⇒ V₂ = 6 × 400 / 300 = 8 lít." }
+      ],
+      HOA: [
+        { type: "MCQ", level: "Nhận biết", topic: "Cacbohidrat", q: "Chất nào sau đây thuộc loại đisaccarit?", opts: ["A. Glucozơ", "B. Saccarozơ", "C. Tinh bột", "D. Xenlulozơ"], ans: 1, exp: "Saccarozơ (C12H22O11) là đisaccarit." },
+        { type: "MCQ", level: "Nhận biết", topic: "Amin - Amino axit", q: "Dung dịch chất nào sau đây làm quỳ tím chuyển sang màu xanh?", opts: ["A. Anilin", "B. Metylamin", "C. Glyxin", "D. Axit glutamic"], ans: 1, exp: "Metylamin (CH3NH2) có tính bazơ mạnh hơn amoniac nên làm xanh quỳ tím." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Polime", q: "Polime nào sau đây được điều chế bằng phản ứng trùng ngưng?", opts: ["A. Polietilen", "B. Poli(vinyl clorua)", "C. Nilon-6,6", "D. Polistiren"], ans: 2, exp: "Nilon-6,6 được tổng hợp từ phản ứng đồng trùng ngưng hexametylenđiamin và axit ađipic." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Pin điện hóa", q: "Xét pin điện hóa Zn - Cu hoạt động ở điều kiện chuẩn (E°(Zn²⁺/Zn) = -0,76V; E°(Cu²⁺/Cu) = +0,34V):", subs: ["a) Zn đóng vai trò là cực âm (anot).", "b) Tại cực dương xảy ra quá trình khử ion Cu²⁺.", "c) Sức điện động chuẩn của pin bằng 1,10 V.", "d) Khối lượng thanh Zn tăng dần trong quá trình pin hoạt động."], ans: [true, true, true, false], exp: "E°_pin = 0,34 - (-0,76) = 1,10 V; thanh Zn bị oxi hóa nên khối lượng giảm." },
+        { type: "SHORT", level: "Vận dụng", topic: "Este - Lipit", q: "Thủy phân hoàn toàn 8,8 gam etyl axetat bằng dung dịch NaOH vừa đủ, thu được m gam muối natri axetat. Giá trị của m bằng bao nhiêu?", ans: "8,2", exp: "n_este = 8,8/88 = 0,1 mol ⇒ m_CH3COONa = 0,1 × 82 = 8,2 gam." },
+        { type: "SHORT", level: "Vận dụng", topic: "Điện phân dung dịch", q: "Điện phân dung dịch CuSO4 với điện cực trơ bằng dòng điện có cường độ 5 A trong thời gian 1930 giây. Khối lượng kim loại Cu bám vào catot bằng bao nhiêu gam?", ans: "3,2", exp: "n_e = (I.t)/F = (5 × 1930)/96500 = 0,1 mol ⇒ n_Cu = 0,05 mol ⇒ m_Cu = 0,05 × 64 = 3,2 gam." }
+      ],
+      SINH: [
+        { type: "MCQ", level: "Nhận biết", topic: "Tiến hóa", q: "Theo thuyết tiến hóa hiện đại, nhân tố nào sau đây cung cấp nguồn biến dị sơ cấp cho quá trình tiến hóa?", opts: ["A. Đột biến", "B. Chọn lọc tự nhiên", "C. Các yếu tố ngẫu nhiên", "D. Giao phối không ngẫu nhiên"], ans: 0, exp: "Đột biến tạo ra các alen mới, là nguồn biến dị sơ cấp." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Di truyền phân tử", q: "Trong quá trình dịch mã, phân tử nào trực tiếp làm khuôn cho việc tổng hợp chuỗi pôlipeptit?", opts: ["A. mARN", "B. tARN", "C. rARN", "D. ADN"], ans: 0, exp: "mARN mang thông tin di truyền làm khuôn trực tiếp tổng hợp chuỗi pôlipeptit." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Nhân đôi ADN", q: "Xét cơ chế nhân đôi ADN ở sinh vật nhân sơ:", subs: ["a) Diễn ra theo nguyên tắc bổ sung và bán bảo toàn.", "b) Enzim ADN polimeraza tổng hợp mạch mới theo chiều 5' → 3'.", "c) Trên cả hai mạch khuôn, mạch mới đều được tổng hợp liên tục.", "d) Quá trình nhân đôi diễn ra trong nhân tế bào."], ans: [true, true, false, false], exp: "Sinh vật nhân sơ chưa có nhân hoàn chỉnh và có một mạch tổng hợp gián đoạn (đoạn Okazaki)." },
+        { type: "SHORT", level: "Vận dụng", topic: "Cấu trúc gen", q: "Một gen có chiều dài 408 nm. Tổng số nuclêôtit của gen này bằng bao nhiêu?", ans: "2400", exp: "N = (2 × 4080) / 3,4 = 2400 nuclêôtit." },
+        { type: "SHORT", level: "Vận dụng", topic: "Quy luật phân li độc lập", q: "Cho phép lai P: AaBb × AaBb (các gen trội hoàn toàn). Tỉ lệ kiểu hình mang hai tính trạng trội ở F1 bằng bao nhiêu phần trăm (làm tròn đến hàng phần mười)?", ans: "56,3", exp: "Tỉ lệ A-B- = 3/4 × 3/4 = 9/16 = 56,25% ≈ 56,3%." }
+      ],
+      SU: [
+        { type: "MCQ", level: "Nhận biết", topic: "Trật tự thế giới sau 1945", q: "Tổ chức nào sau đây được thành lập năm 1945 nhằm mục tiêu duy trì hòa bình và an ninh thế giới?", opts: ["A. Liên hợp quốc", "B. ASEAN", "C. Liên minh châu Âu", "D. NATO"], ans: 0, exp: "Liên hợp quốc (UN) chính thức thành lập năm 1945." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Hiệp hội ASEAN", q: "Văn kiện nào đánh dấu bước ngoặt quan trọng, tạo cơ sở pháp lý để xây dựng Cộng đồng ASEAN vững mạnh?", opts: ["A. Hiến chương ASEAN (2007)", "B. Tuyên bố Băng Cốc (1967)", "C. Hiệp ước Bali (1976)", "D. Tầm nhìn ASEAN 2020"], ans: 0, exp: "Hiến chương ASEAN thông qua năm 2007 tạo khung pháp lý và thể chế cho Cộng đồng ASEAN." },
+        { type: "MCQ", level: "Vận dụng", topic: "Kháng chiến chống Mỹ (1954-1975)", q: "Thắng lợi nào của quân dân miền Nam Việt Nam đã buộc Mỹ phải tuyên bố 'phi Mỹ hóa' chiến tranh xâm lược?", opts: ["A. Cuộc Tổng tiến công và nổi dậy Tết Mậu Thân 1968", "B. Chiến thắng Ấp Bắc (1963)", "C. Chiến thắng Vạn Tường (1965)", "D. Chiến dịch Hồ Chí Minh (1975)"], ans: 0, exp: "Tổng tiến công Tết Mậu Thân 1968 làm lung lay ý chí xâm lược, buộc Mỹ tuyên bố 'phi Mỹ hóa' chiến tranh." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Công cuộc Đổi mới từ 1986", q: "Xét đường lối Đổi mới ở Việt Nam từ Đại hội VI (12/1986):", subs: ["a) Trọng tâm là đổi mới về kinh tế, từng bước đổi mới chính trị.", "b) Chuyển từ cơ chế tập trung quan liêu bao cấp sang kinh tế thị trường định hướng XHCN.", "c) Xóa bỏ hoàn toàn thành phần kinh tế tư nhân.", "d) Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa."], ans: [true, true, false, true], exp: "Đổi mới phát triển kinh tế nhiều thành phần, trong đó có kinh tế tư nhân." }
+      ],
+      DIA: [
+        { type: "MCQ", level: "Nhận biết", topic: "Vùng kinh tế", q: "Vùng kinh tế nào của nước ta dẫn đầu cả nước về giá trị sản xuất công nghiệp?", opts: ["A. Đông Nam Bộ", "B. Tây Nguyên", "C. Trung du và miền núi Bắc Bộ", "D. Đồng bằng sông Cửu Long"], ans: 0, exp: "Đông Nam Bộ có trình độ phát triển công nghiệp cao nhất cả nước." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Địa lí ngành kinh tế", q: "Thế mạnh nổi bật hàng đầu để phát triển cây công nghiệp lâu năm ở Tây Nguyên là:", opts: ["A. Đất badan màu mỡ trên các cao nguyên rộng lớn và khí hậu cận xích đạo", "B. Mạng lưới sông ngòi dày đặc quanh năm", "C. Nguồn lao động dồi dào có trình độ kỹ thuật cao", "D. Cơ sở hạ tầng giao thông đồng bộ nhất cả nước"], ans: 0, exp: "Đất badan giàu dinh dưỡng tập trung trên diện rộng kết hợp khí hậu phân hóa theo độ cao rất thuận lợi cho cà phê, hồ tiêu, cao su." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Thiên nhiên nhiệt đới ẩm gió mùa", q: "Về đặc điểm thiên nhiên nhiệt đới ẩm gió mùa của Việt Nam:", subs: ["a) Tổng bức xạ lớn, cân bằng bức xạ luôn dương quanh năm.", "b) Lượng mưa trung bình năm đạt từ 1500 – 2000 mm.", "c) Gió mùa Đông Bắc hoạt động mạnh mẽ ở phía Nam đèo Hải Vân.", "d) Sông ngòi nhiều nước, giàu phù sa, chế độ nước theo mùa."], ans: [true, true, false, true], exp: "Gió mùa Đông Bắc bị suy yếu khi vượt qua dãy Bạch Mã (đèo Hải Vân)." },
+        { type: "SHORT", level: "Vận dụng", topic: "Địa lí dân cư", q: "Năm 2024, diện tích tự nhiên của một tỉnh là 16.486 km², dân số là 3.450.000 người. Mật độ dân số của tỉnh đó bằng bao nhiêu người/km² (làm tròn đến hàng đơn vị)?", ans: "209", exp: "Mật độ = 3.450.000 / 16.486 ≈ 209 người/km²." },
+        { type: "SHORT", level: "Vận dụng", topic: "Khí hậu - Biên độ nhiệt", q: "Tại một trạm khí tượng, nhiệt độ trung bình tháng nóng nhất là 29,4°C và tháng lạnh nhất là 16,8°C. Biên độ nhiệt độ năm tại trạm đó bằng bao nhiêu °C?", ans: "12,6", exp: "Biên độ nhiệt năm = 29,4 - 16,8 = 12,6°C." }
+      ],
+      GDKT: [
+        { type: "MCQ", level: "Nhận biết", topic: "Cung - Cầu thị trường", q: "Trong nền kinh tế thị trường, khi giá cả hàng hóa tăng lên thì lượng cung hàng hóa đó thường biến động như thế nào?", opts: ["A. Tăng lên", "B. Giảm xuống", "C. Không thay đổi", "D. Bằng không"], ans: 0, exp: "Theo quy luật cung – cầu, giá tăng kích thích người sản xuất mở rộng lượng cung." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Tăng trưởng & Phát triển kinh tế", q: "Chỉ tiêu nào sau đây phản ánh tổng thu nhập quốc dân tính bình quân theo đầu người trong một năm?", opts: ["A. GNI/người", "B. Chỉ số giá tiêu dùng CPI", "C. Tỉ lệ thất nghiệp", "D. Cán cân thương mại"], ans: 0, exp: "GNI/người đo lường tổng thu nhập quốc dân bình quân đầu người." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Quyền tự do kinh doanh", q: "Về quyền và nghĩa vụ của công dân trong kinh doanh:", subs: ["a) Công dân có quyền tự do kinh doanh những ngành nghề pháp luật không cấm.", "b) Doanh nghiệp có nghĩa vụ nộp thuế đầy đủ và đúng hạn.", "c) Người kinh doanh được phép xả thải chưa qua xử lý để giảm chi phí.", "d) Bảo vệ quyền lợi người tiêu dùng là trách nhiệm của tổ chức, cá nhân kinh doanh."], ans: [true, true, false, true], exp: "Doanh nghiệp bắt buộc phải tuân thủ pháp luật bảo vệ môi trường." }
+      ],
+      TIN: [
+        { type: "MCQ", level: "Nhận biết", topic: "Thiết kế Web HTML", q: "Trong HTML, thẻ nào sau đây dùng để tạo một liên kết siêu văn bản (hyperlink)?", opts: ["A. <a>", "B. <link>", "C. <href>", "D. <p>"], ans: 0, exp: "Thẻ <a> kết hợp thuộc tính href dùng để tạo liên kết." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Mạng máy tính & Giao thức", q: "Thiết bị mạng nào có chức năng định tuyến (tìm đường đi tối ưu) cho các gói tin giữa các mạng khác nhau?", opts: ["A. Router (Bộ định tuyến)", "B. Hub", "C. Repeater", "D. Switch nội bộ"], ans: 0, exp: "Router hoạt động ở tầng mạng, đảm nhiệm định tuyến gói tin liên mạng." },
+        { type: "TF", level: "Thông hiểu - Vận dụng", topic: "Trí tuệ nhân tạo & An toàn số", q: "Xét về Trí tuệ nhân tạo (AI) và An toàn thông tin:", subs: ["a) Học máy (Machine Learning) giúp hệ thống học từ dữ liệu mà không cần lập trình tường minh mọi quy tắc.", "b) Xác thực hai yếu tố (2FA) giúp tăng cường bảo mật tài khoản trực tuyến.", "c) Mọi thông tin do AI tạo ra đều chính xác tuyệt đối 100%.", "d) Không nên chia sẻ mã OTP ngân hàng cho bất kỳ ai."], ans: [true, true, false, true], exp: "AI có thể tạo thông tin sai lệch (hallucination), cần kiểm chứng nguồn." }
+      ],
+      ANH: [
+        { type: "MCQ", level: "Nhận biết", topic: "Ngữ pháp - Thì động từ", q: "Mark the letter A, B, C, or D to indicate the correct answer: By the time we arrived at the station, the train ______.", opts: ["A. has left", "B. had left", "C. leaves", "D. will leave"], ans: 1, exp: "Hành động xảy ra trước một hành động quá khứ khác dùng thì Quá khứ hoàn thành (had left)." },
+        { type: "MCQ", level: "Thông hiểu", topic: "Sắp xếp hội thoại chuẩn mới", q: "Choose the best arrangement of utterances to make a meaningful exchange: a. Thanks, I'd love to! b. Would you like to join our study group this Sunday? c. Great, see you at the library at 9 AM.", opts: ["A. b - a - c", "B. a - b - c", "C. c - b - a", "D. b - c - a"], ans: 0, exp: "Lời mời (b) → Lời đồng ý (a) → Chốt hẹn (c)." },
+        { type: "MCQ", level: "Vận dụng", topic: "Đọc điền thông báo/tờ rơi", q: "Read the school notice: 'All students ______ to submit their elective subject registration forms before Friday.'", opts: ["A. are required", "B. require", "C. requiring", "D. have required"], ans: 0, exp: "Cấu trúc bị động mang tính quy định hành chính: are required to V." },
+        { type: "MCQ", level: "Vận dụng", topic: "Cụm động từ (Phrasal Verbs)", q: "To avoid academic burnout, students should ______ unrealistic expectations caused by social media.", opts: ["A. let go of", "B. put up with", "C. look down on", "D. run out of"], ans: 0, exp: "'let go of' nghĩa là buông bỏ những kỳ vọng phi thực tế." }
+      ],
+      VAN: [
+        { type: "ESSAY", level: "Nhận biết", topic: "Đọc hiểu ngữ liệu ngoài SGK", q: "Phần I – Đọc hiểu (Câu 1 – 0,5đ): Xác định thể thơ và phương thức biểu đạt chính của đoạn trích ngữ liệu ngoài SGK về khát vọng cống hiến của tuổi trẻ.", rubric: "Nêu đúng thể thơ tự do (0,25đ) và phương thức biểu đạt chính là biểu cảm (0,25đ)." },
+        { type: "ESSAY", level: "Thông hiểu", topic: "Đọc hiểu ngữ liệu ngoài SGK", q: "Phần I – Đọc hiểu (Câu 2 – 0,5đ): Chỉ ra và nêu tác dụng của biện pháp tu từ điệp cấu trúc được sử dụng trong hai khổ thơ đầu của ngữ liệu.", rubric: "Chỉ đúng từ ngữ/cấu trúc lặp lại (0,25đ) và phân tích tác dụng nhấn mạnh nhịp điệu, khát vọng dấn thân (0,25đ)." },
+        { type: "ESSAY", level: "Thông hiểu", topic: "Đọc hiểu ngữ liệu ngoài SGK", q: "Phần I – Đọc hiểu (Câu 3 – 1,0đ): Anh/chị hiểu như thế nào về thông điệp 'Đừng đo giá trị bước chân mình bằng dấu chân của người khác' trong văn bản?", rubric: "Giải thích được ý nghĩa: Mỗi cá nhân có lộ trình và năng lực riêng, không nên đánh mất bản sắc vì so sánh mù quáng (1,0đ)." },
+        { type: "ESSAY", level: "Thông hiểu", topic: "Đọc hiểu ngữ liệu ngoài SGK", q: "Phần I – Đọc hiểu (Câu 4 – 1,0đ): Nhận xét tình cảm, thái độ của tác giả dành cho thế hệ trẻ được thể hiện qua đoạn trích.", rubric: "Nêu rõ thái độ trân trọng, tin tưởng và kỳ vọng vào bản lĩnh tự chủ của thế hệ trẻ (1,0đ)." },
+        { type: "ESSAY", level: "Vận dụng", topic: "Đọc hiểu ngữ liệu ngoài SGK", q: "Phần I – Đọc hiểu (Câu 5 – 1,0đ): Từ nội dung đoạn trích, anh/chị hãy rút ra một bài học ý nghĩa nhất cho bản thân trước ngưỡng cửa lựa chọn nghề nghiệp (trình bày 5–7 dòng).", rubric: "Nêu được bài học cụ thể, sâu sắc, gắn với trách nhiệm lựa chọn tương lai của bản thân (1,0đ)." },
+        { type: "ESSAY", level: "Vận dụng", topic: "Viết đoạn văn Nghị luận", q: "Phần II – Viết (Câu 1 – 2,0 điểm): Viết đoạn văn nghị luận (khoảng 200 chữ) phân tích vẻ đẹp hình tượng cái tôi trữ tình khao khát tự chủ trong đoạn thơ ở Phần Đọc hiểu.", rubric: "Đảm bảo dung lượng 200 chữ (0,25đ); Xác định đúng trọng tâm phân tích (0,25đ); Lập luận sắc sảo, dẫn chứng thơ tiêu biểu (1,25đ); Diễn đạt sáng tạo (0,25đ)." },
+        { type: "ESSAY", level: "Vận dụng cao", topic: "Viết bài văn Nghị luận xã hội", q: "Phần II – Viết (Câu 2 – 4,0 điểm): Viết bài văn nghị luận xã hội (khoảng 600 chữ) trình bày suy nghĩ của anh/chị về bản lĩnh giữ vững mục tiêu cá nhân trước áp lực đám đông của người trẻ hiện nay.", rubric: "Đảm bảo cấu trúc 3 phần (0,5đ); Xác định đúng vấn đề nghị luận (0,5đ); Triển khai lập luận chặt chẽ, dẫn chứng thuyết phục về bản lĩnh cá nhân và tư duy độc lập (2,5đ); Sáng tạo, diễn đạt chuẩn xác (0,5đ)." }
+      ]
+    };
+
+    let currentExamQuestions = [];
+    let userExamAnswers = {};
+    let flaggedQuestions = {};
+    let cbtTimerInterval = null;
+    let cbtSecondsLeft = 5400;
+
+    function buildFullExamForSubject(subjKey) {
+      const meta = subjectMeta[subjKey];
+      const seeds = seedQuestions[subjKey] || seedQuestions.TOAN;
+      const fullList = [];
+
+      if (subjKey === "VAN") {
+        for (let i = 1; i <= 7; i++) {
+          const s = seeds[(i - 1) % seeds.length];
+          fullList.push({
+            num: i,
+            type: "ESSAY",
+            level: s.level || "Thông hiểu",
+            topic: s.topic || "Ngữ văn 12",
+            part: i <= 5 ? "Phần I: Đọc hiểu ngữ liệu ngoài SGK (4,0đ)" : "Phần II: Viết đoạn & bài nghị luận (6,0đ)",
+            q: s.q,
+            rubric: s.rubric
+          });
+        }
+        return fullList;
+      }
+
+      if (subjKey === "ANH") {
+        for (let i = 1; i <= 40; i++) {
+          const s = seeds[(i - 1) % seeds.length];
+          const lv = i <= 16 ? "Nhận biết" : i <= 28 ? "Thông hiểu" : "Vận dụng";
+          fullList.push({
+            num: i,
+            type: "MCQ",
+            level: lv,
+            topic: i <= 12 ? "Đọc điền thông báo/tờ rơi" : i <= 17 ? "Sắp xếp hội thoại/đoạn văn" : i <= 22 ? "Đọc điền khuyết thông tin" : "Đọc hiểu chuyên sâu",
+            part: i <= 12 ? "Read Advertisement/Leaflet" : i <= 17 ? "Arrangement" : "Reading Comprehension",
+            q: i <= seeds.length ? s.q : `Question ${i} (${lv}): ${s.q}`,
+            opts: s.opts,
+            ans: s.ans,
+            exp: s.exp
+          });
+        }
+        return fullList;
+      }
+
+      const mcqCount = subjKey === "TOAN" ? 12 : (["SU", "GDKT", "TIN"].includes(subjKey) ? 24 : 18);
+      const tfCount = 4;
+      const shortCount = ["SU", "GDKT", "TIN"].includes(subjKey) ? 0 : 6;
+
+      const mcqSeeds = seeds.filter(x => x.type === "MCQ");
+      const tfSeeds = seeds.filter(x => x.type === "TF");
+      const shortSeeds = seeds.filter(x => x.type === "SHORT");
+
+      let qNum = 1;
+      for (let i = 0; i < mcqCount; i++) {
+        const s = mcqSeeds[i % mcqSeeds.length];
+        const lv = i < Math.ceil(mcqCount * 0.5) ? "Nhận biết" : i < Math.ceil(mcqCount * 0.85) ? "Thông hiểu" : "Vận dụng";
+        fullList.push({
+          num: qNum++,
+          type: "MCQ",
+          level: s.level || lv,
+          topic: s.topic || meta.name,
+          part: "Phần I: Trắc nghiệm nhiều lựa chọn (0,25đ/câu)",
+          q: i < mcqSeeds.length ? s.q : `[Mã đề 10${(i % 4) + 1} • ${s.topic || meta.name}] ${s.q}`,
+          opts: s.opts,
+          ans: s.ans,
+          exp: s.exp
+        });
+      }
+      for (let i = 0; i < tfCount; i++) {
+        const s = tfSeeds[i % tfSeeds.length];
+        fullList.push({
+          num: qNum++,
+          type: "TF",
+          level: s.level || "Thông hiểu - Vận dụng",
+          topic: s.topic || meta.name,
+          part: "Phần II: Trắc nghiệm Đúng/Sai lũy tiến (0,1 – 0,25 – 0,5 – 1,0đ)",
+          q: i < tfSeeds.length ? s.q : `[Chuyên đề ${s.topic || meta.name} – Đúng/Sai 4 ý] ${s.q}`,
+          subs: s.subs,
+          ans: s.ans,
+          exp: s.exp
+        });
+      }
+      for (let i = 0; i < shortCount; i++) {
+        const s = shortSeeds[i % shortSeeds.length];
+        fullList.push({
+          num: qNum++,
+          type: "SHORT",
+          level: s.level || "Vận dụng",
+          topic: s.topic || meta.name,
+          part: "Phần III: Trắc nghiệm Trả lời ngắn điền số",
+          q: i < shortSeeds.length ? s.q : `[Vận dụng ${s.topic || meta.name}] ${s.q}`,
+          ans: s.ans,
+          exp: s.exp
+        });
+      }
+      return fullList;
+    }
+
+    function loadCbtExam(subjKey) {
+      const meta = subjectMeta[subjKey];
+      currentExamQuestions = buildFullExamForSubject(subjKey);
+      userExamAnswers = {};
+      flaggedQuestions = {};
+
+      document.getElementById("cbtExamTitle").textContent = `Đề thi thử chuẩn cấu trúc Bộ GD&ĐT – Môn ${meta.name}`;
+      document.getElementById("cbtExamStructure").textContent = meta.structure;
+      const matrixEl = document.getElementById("cbtMatrixBadge");
+      if (matrixEl && meta.matrix) matrixEl.textContent = meta.matrix;
+      document.getElementById("cbtResultBanner").classList.add("hidden");
+
+      if (cbtTimerInterval) clearInterval(cbtTimerInterval);
+      cbtSecondsLeft = meta.minutes * 60;
+      updateCbtTimerDisplay();
+      cbtTimerInterval = setInterval(() => {
+        if (cbtSecondsLeft > 0) {
+          cbtSecondsLeft--;
+          updateCbtTimerDisplay();
+        } else {
+          clearInterval(cbtTimerInterval);
+          gradeCbtExam();
+        }
+      }, 1000);
+
+      renderCbtQuestions();
+      renderOmrGrid();
+      renderSavedScoresSummary();
+    }
+
+    function updateCbtTimerDisplay() {
+      const mins = String(Math.floor(cbtSecondsLeft / 60)).padStart(2, "0");
+      const secs = String(cbtSecondsLeft % 60).padStart(2, "0");
+      document.getElementById("cbtTimerDisplay").textContent = `${mins}:${secs}`;
+    }
+
+    function toggleFlagQuestion(num) {
+      flaggedQuestions[num] = !flaggedQuestions[num];
+      renderCbtQuestions();
+      renderOmrGrid();
+    }
+
+    function renderCbtQuestions() {
+      const container = document.getElementById("cbtQuestionsList");
+      container.innerHTML = currentExamQuestions.map(q => {
+        const isFlagged = flaggedQuestions[q.num];
+        let bodyHtml = "";
+
+        if (q.type === "MCQ") {
+          bodyHtml = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+            ${q.opts.map((opt, idx) => {
+              const selected = userExamAnswers[q.num] === idx;
+              return `<button onclick="setMcqAnswer(${q.num}, ${idx})" class="p-3 rounded-xl border text-left text-xs transition ${selected ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-bold' : 'bg-slate-950/80 hover:bg-slate-800 text-slate-200 border-slate-800'}">${opt}</button>`;
+            }).join("")}
+          </div>`;
+        } else if (q.type === "TF") {
+          const curArr = userExamAnswers[q.num] || [null, null, null, null];
+          bodyHtml = `<div class="space-y-2 pt-2">
+            ${q.subs.map((sub, sIdx) => `
+              <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2 text-xs">
+                <span class="text-slate-200">${sub}</span>
+                <div class="flex gap-1.5 shrink-0">
+                  <button onclick="setTfAnswer(${q.num}, ${sIdx}, true)" class="px-2.5 py-1 rounded-lg font-bold ${curArr[sIdx] === true ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">Đúng</button>
+                  <button onclick="setTfAnswer(${q.num}, ${sIdx}, false)" class="px-2.5 py-1 rounded-lg font-bold ${curArr[sIdx] === false ? 'bg-rose-500 text-white' : 'bg-slate-800 text-slate-400'}">Sai</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>`;
+        } else if (q.type === "SHORT") {
+          const val = userExamAnswers[q.num] || "";
+          bodyHtml = `<div class="pt-2 flex items-center gap-2">
+            <span class="text-xs text-slate-400">Điền kết quả số (tối đa 4 ký tự):</span>
+            <input type="text" maxlength="6" value="${val}" oninput="setShortAnswer(${q.num}, this.value)" placeholder="VD: 0,56 hoặc -2,5" class="w-40 rounded-xl bg-slate-950 border border-cyan-500/50 px-3 py-1.5 text-xs font-mono text-white outline-none" />
+          </div>`;
+        } else {
+          const val = userExamAnswers[q.num] || "";
+          bodyHtml = `<div class="pt-2 space-y-2">
+            <textarea rows="3" oninput="setShortAnswer(${q.num}, this.value)" placeholder="Nhập dàn ý / bài làm tự luận của bạn để đối chiếu Rubric chấm điểm..." class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-xs text-slate-200 outline-none">${val}</textarea>
+          </div>`;
+        }
+
+        return `
+          <div id="qCard_${q.num}" class="p-4 rounded-2xl bg-slate-900/90 border ${isFlagged ? 'border-amber-500' : 'border-slate-800'} space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-lg bg-cyan-950 text-neonCyan font-mono text-xs font-bold">Câu ${q.num}</span>
+                <span class="px-2 py-0.5 rounded-md bg-indigo-950 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold">${q.level || 'Thông hiểu'}</span>
+                <span class="text-[11px] text-slate-400">${q.topic ? q.topic + ' • ' : ''}${q.part}</span>
+              </div>
+              <button onclick="toggleFlagQuestion(${q.num})" class="text-xs px-2 py-1 rounded-lg ${isFlagged ? 'bg-amber-500/20 text-neonYellow' : 'text-slate-500 hover:text-slate-300'}">
+                <i class="fa-solid fa-flag"></i>
+              </button>
+            </div>
+            <div class="text-xs sm:text-sm text-white font-medium leading-relaxed">${q.q}</div>
+            ${bodyHtml}
+            <div id="qExp_${q.num}" class="hidden p-3 rounded-xl bg-slate-950 border border-emerald-500/30 text-[11px] text-emerald-300"></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function setMcqAnswer(num, idx) {
+      userExamAnswers[num] = idx;
+      renderCbtQuestions();
+      renderOmrGrid();
+    }
+
+    function setTfAnswer(num, sIdx, boolVal) {
+      if (!userExamAnswers[num]) userExamAnswers[num] = [null, null, null, null];
+      userExamAnswers[num][sIdx] = boolVal;
+      renderCbtQuestions();
+      renderOmrGrid();
+    }
+
+    function setShortAnswer(num, val) {
+      userExamAnswers[num] = val;
+      renderOmrGrid();
+    }
+
+    function renderOmrGrid() {
+      const answeredCount = currentExamQuestions.filter(q => {
+        const a = userExamAnswers[q.num];
+        if (q.type === "TF") return Array.isArray(a) && a.some(v => v !== null);
+        return a !== undefined && a !== null && String(a).trim() !== "";
+      }).length;
+
+      document.getElementById("cbtAnsweredCount").textContent = `${answeredCount}/${currentExamQuestions.length} câu`;
+      document.getElementById("cbtOmrGrid").innerHTML = currentExamQuestions.map(q => {
+        const a = userExamAnswers[q.num];
+        const isDone = q.type === "TF" ? (Array.isArray(a) && a.some(v => v !== null)) : (a !== undefined && a !== null && String(a).trim() !== "");
+        const isFlagged = flaggedQuestions[q.num];
+        let cls = "bg-slate-950 border-slate-800 text-slate-400";
+        if (isFlagged) cls = "bg-amber-500/20 border-amber-500 text-neonYellow font-bold";
+        else if (isDone) cls = "bg-cyan-500/20 border-cyan-500 text-neonCyan font-bold";
+
+        return `<button onclick="document.getElementById('qCard_${q.num}').scrollIntoView({behavior:'smooth', block:'center'})" class="py-1.5 rounded-lg border text-[11px] font-mono ${cls}">${q.num}</button>`;
+      }).join("");
+    }
+
+    function gradeCbtExam() {
+      if (cbtTimerInterval) clearInterval(cbtTimerInterval);
+      const subjKey = document.getElementById("cbtSubjectSelect").value;
+      const meta = subjectMeta[subjKey];
+      let totalScore = 0;
+
+      if (subjKey === "VAN") {
+        const answered = currentExamQuestions.filter(q => (userExamAnswers[q.num] || "").trim().length > 10).length;
+        totalScore = Number((6.5 + (answered / 7) * 3.0).toFixed(2));
+        currentExamQuestions.forEach(q => {
+          const expEl = document.getElementById(`qExp_${q.num}`);
+          if (expEl) {
+            expEl.classList.remove("hidden");
+            expEl.innerHTML = `<strong>Rubric chấm chuẩn Bộ GD&ĐT:</strong> ${q.rubric}`;
+          }
+        });
+      } else {
+        const mcqWeight = 0.25;
+        const shortWeight = subjKey === "TOAN" ? 0.5 : 0.25;
+
+        currentExamQuestions.forEach(q => {
+          let earned = 0;
+          if (q.type === "MCQ") {
+            if (userExamAnswers[q.num] === q.ans) earned = mcqWeight;
+          } else if (q.type === "TF") {
+            const arr = userExamAnswers[q.num] || [];
+            let correctSub = 0;
+            for (let i = 0; i < 4; i++) {
+              if (arr[i] === q.ans[i]) correctSub++;
+            }
+            if (correctSub === 1) earned = 0.1;
+            else if (correctSub === 2) earned = 0.25;
+            else if (correctSub === 3) earned = 0.5;
+            else if (correctSub === 4) earned = 1.0;
+          } else if (q.type === "SHORT") {
+            const cleanUser = String(userExamAnswers[q.num] || "").trim().replace(".", ",");
+            const cleanAns = String(q.ans).trim().replace(".", ",");
+            if (cleanUser === cleanAns) earned = shortWeight;
+          }
+          totalScore += earned;
+
+          const expEl = document.getElementById(`qExp_${q.num}`);
+          if (expEl) {
+            expEl.classList.remove("hidden");
+            expEl.innerHTML = `<strong>Đạt ${earned.toFixed(2)}đ:</strong> ${q.exp}`;
+          }
+        });
+      }
+
+      const finalScore = Math.min(10, Number(totalScore.toFixed(2)));
+      gameState.savedScores[subjKey] = finalScore;
+      gameState.jomo += 20;
+      updateHud();
+      renderSavedScoresSummary();
+
+      const banner = document.getElementById("cbtResultBanner");
+      banner.classList.remove("hidden");
+      banner.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div class="text-xs font-bold text-neonGreen uppercase">Kết quả Chấm Tự Động Chuẩn Quy Chế Bộ GD&ĐT</div>
+            <div class="text-lg font-extrabold text-white mt-0.5">Môn ${meta.name}: <span class="text-neonYellow">${finalScore} / 10,00 điểm</span></div>
+          </div>
+          <button onclick="switchScreen('nv')" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-extrabold text-xs">
+            Dùng điểm này đi Đặt Nguyện Vọng →
+          </button>
+        </div>
+        <p class="text-xs text-emerald-200">Điểm số đã được lưu tự động vào Phiếu Đăng Ký Nguyện Vọng (Tab 2). Xem giải chi tiết bên dưới từng câu hỏi.</p>
+      `;
+      showGameToast("Đã chấm điểm bài thi", `Môn ${meta.name} đạt ${finalScore} điểm và đã đồng bộ sang Cổng Nguyện vọng.`, "success");
+    }
+
+    function renderSavedScoresSummary() {
+      const box = document.getElementById("savedScoresSummary");
+      if (!box) return;
+      box.innerHTML = Object.keys(subjectMeta).map(k => `
+        <div class="flex items-center justify-between py-1 border-b border-slate-800/80">
+          <span class="text-slate-400">${subjectMeta[k].name}</span>
+          <span class="font-mono font-bold text-white">${gameState.savedScores[k].toFixed(2)} đ</span>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 3. CỔNG ĐĂNG KÝ NGUYỆN VỌNG & THUẬT TOÁN LỌC ẢO QUỐC GIA (TAB 2)
+    // =========================================================================
+    const nvCatalog = [
+      { id: "NV_BK_CNTT", code: "IT1", major: "Khoa học Máy tính", school: "ĐH Bách khoa Hà Nội", combos: ["A00", "A01"], cutoff: 27.2, fee: "32 tr/năm", tier: "Vươn tới", reqRank: "ANY", methodsCount: "3 PT (TT 95/2026)" },
+      { id: "NV_UET_KTPM", code: "CN8", major: "Kỹ thuật Phần mềm", school: "ĐH Công nghệ – ĐHQGHN", combos: ["A00", "A01"], cutoff: 26.2, fee: "30 tr/năm", tier: "Trọng tâm", reqRank: "ANY", methodsCount: "3 PT (TT 95/2026)" },
+      { id: "NV_FTU_KTQT", code: "NTH01", major: "Kinh tế Quốc tế", school: "ĐH Ngoại thương", combos: ["A00", "A01", "D01"], cutoff: 26.5, fee: "28 tr/năm", tier: "Vươn tới", reqRank: "ANY", methodsCount: "3 PT (TT 95/2026)" },
+      { id: "NV_NEU_QTKD", code: "7340101", major: "Quản trị Kinh doanh", school: "ĐH Kinh tế Quốc dân", combos: ["A00", "A01", "D01"], cutoff: 25.8, fee: "25 tr/năm", tier: "Trọng tâm", reqRank: "ANY", methodsCount: "3 PT (TT 95/2026)" },
+      { id: "NV_HMU_YKHOA", code: "7720101", major: "Y khoa (Bác sĩ Đa khoa)", school: "ĐH Y Hà Nội", combos: ["B00"], cutoff: 27.6, fee: "55 tr/năm", tier: "Vươn tới", reqRank: "TOT", methodsCount: "3 PT (Học lực Tốt)" },
+      { id: "NV_HUP_DUOC", code: "7720201", major: "Dược học", school: "ĐH Dược Hà Nội", combos: ["A00", "B00"], cutoff: 25.0, fee: "26 tr/năm", tier: "Trọng tâm", reqRank: "TOT", methodsCount: "3 PT (Học lực Tốt)" },
+      { id: "NV_HNUE_SPVAN", code: "7140217", major: "Sư phạm Ngữ văn (NĐ 116)", school: "ĐH Sư phạm Hà Nội", combos: ["C00", "D01"], cutoff: 26.4, fee: "Miễn học phí", tier: "Trọng tâm", reqRank: "TOT", methodsCount: "3 PT (Học lực Tốt)" },
+      { id: "NV_HLU_LUATKT", code: "7380107", major: "Luật Kinh tế", school: "ĐH Luật Hà Nội", combos: ["A00", "A01", "C00", "D01"], cutoff: 25.2, fee: "24 tr/năm", tier: "Trọng tâm", reqRank: "TOT", methodsCount: "3 PT (Học lực Tốt)" },
+      { id: "NV_VINH_CNTT", code: "7480201", major: "Công nghệ Thông tin", school: "Trường ĐH Vinh", combos: ["A00", "A01", "D01"], cutoff: 21.5, fee: "16 tr/năm", tier: "An toàn", reqRank: "ANY", methodsCount: "3 PT (TT 95/2026)" },
+      { id: "NV_VINH_SPTH", code: "7140202", major: "Sư phạm Tiểu học (NĐ 116)", school: "Trường ĐH Vinh", combos: ["C00", "D01"], cutoff: 23.0, fee: "Miễn học phí", tier: "An toàn", reqRank: "TOT", methodsCount: "3 PT (Học lực Tốt)" }
+    ];
+
+    const comboSubjectMap = {
+      A00: ["TOAN", "LY", "HOA"],
+      A01: ["TOAN", "LY", "ANH"],
+      B00: ["TOAN", "HOA", "SINH"],
+      C00: ["VAN", "SU", "DIA"],
+      D01: ["TOAN", "VAN", "ANH"]
+    };
+
+    function getComputedAdmissionTotal() {
+      const combo = document.getElementById("nvComboSelect")?.value || "A00";
+      const rawPriority = parseFloat(document.getElementById("nvPriorityBonus")?.value || "0") || 0;
+      const rawEncourage = Math.min(0.5, parseFloat(document.getElementById("nvEncourageBonus")?.value || "0") || 0);
+      const grade12Rank = document.getElementById("nvGrade12Rank")?.value || "TOT";
+      const subjs = comboSubjectMap[combo] || ["TOAN", "LY", "HOA"];
+      const baseSum = subjs.reduce((acc, k) => acc + (gameState.savedScores[k] || 8.0), 0);
+      const effectivePriority = baseSum >= 22.5 ? ((30 - baseSum) / 7.5) * rawPriority : rawPriority;
+      const total = Math.min(30, baseSum + Math.max(0, effectivePriority) + rawEncourage);
+      return {
+        combo,
+        grade12Rank,
+        baseSum: Number(baseSum.toFixed(2)),
+        effectivePriority: Number(Math.max(0, effectivePriority).toFixed(2)),
+        encourageBonus: Number(rawEncourage.toFixed(2)),
+        meetsFloor15: baseSum >= 15.0,
+        total: Number(total.toFixed(2))
+      };
+    }
+
+    function updateAdmissionScoreSummary() {
+      const info = getComputedAdmissionTotal();
+      const el = document.getElementById("nvTotalScoreDisplay");
+      if (el) el.textContent = info.total.toFixed(2);
+      renderNvCatalogAndOrder();
+    }
+
+    function renderNvCatalogAndOrder() {
+      const catBox = document.getElementById("nvAvailableMajorsList");
+      const ordBox = document.getElementById("nvOrderedList");
+      const countEl = document.getElementById("nvSelectedCount");
+      if (!catBox || !ordBox) return;
+
+      const selectedCombo = document.getElementById("nvComboSelect")?.value || "A00";
+      const grade12Rank = document.getElementById("nvGrade12Rank")?.value || "TOT";
+
+      catBox.innerHTML = nvCatalog.map(m => {
+        const isAdded = gameState.selectedNvIds.includes(m.id);
+        const comboMatch = m.combos.includes(selectedCombo);
+        const rankMatch = m.reqRank !== "TOT" || grade12Rank === "TOT";
+        return `
+          <div class="p-3.5 rounded-2xl bg-slate-900/90 border ${comboMatch && rankMatch ? 'border-slate-800' : 'border-rose-500/30 opacity-85'} flex items-center justify-between gap-3 text-xs">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-neonCyan font-mono text-[10px] font-bold">${m.code}</span>
+                <span class="font-bold text-white text-sm">${m.major}</span>
+                <span class="px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 text-[10px]">${m.tier}</span>
+              </div>
+              <div class="text-slate-300 font-medium">${m.school} • ${m.methodsCount} • Học phí: <span class="text-slate-400">${m.fee}</span></div>
+              <div class="text-[11px] text-slate-400">
+                Tổ hợp: <strong class="${comboMatch ? 'text-neonGreen' : 'text-rose-400'}">${m.combos.join(", ")}</strong> • Chuẩn dự kiến: <strong class="text-neonYellow">${m.cutoff.toFixed(2)}đ</strong>
+                ${m.reqRank === "TOT" ? ` • Điều kiện: <strong class="${rankMatch ? 'text-emerald-400' : 'text-rose-400'}">Học lực lớp 12 mức Tốt</strong>` : ""}
+              </div>
+            </div>
+            <button onclick="addNvAspiration('${m.id}')" ${isAdded ? "disabled" : ""} class="px-3 py-2 rounded-xl font-bold shrink-0 transition ${isAdded ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'}">
+              ${isAdded ? "Đã thêm" : "+ Thêm NV"}
+            </button>
+          </div>
+        `;
+      }).join("");
+
+      if (countEl) countEl.textContent = `${gameState.selectedNvIds.length} / 5 NV`;
+
+      if (gameState.selectedNvIds.length === 0) {
+        ordBox.innerHTML = `<div class="p-6 rounded-2xl border border-dashed border-slate-700 text-center text-xs text-slate-500">Chưa có nguyện vọng nào. Hãy bấm <strong>"+ Thêm NV"</strong> ở danh sách bên trái (tối đa 5 nguyện vọng).</div>`;
+        return;
+      }
+
+      ordBox.innerHTML = gameState.selectedNvIds.map((id, idx) => {
+        const m = nvCatalog.find(item => item.id === id);
+        if (!m) return "";
+        const comboMatch = m.combos.includes(selectedCombo);
+        return `
+          <div class="p-3 rounded-xl bg-slate-950 border ${comboMatch ? 'border-slate-700' : 'border-rose-500/60'} flex items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-7 h-7 rounded-lg bg-cyan-500 text-slate-950 font-cyber font-extrabold flex items-center justify-center shrink-0">NV${idx + 1}</span>
+              <div class="truncate">
+                <div class="font-bold text-white truncate">${m.major} – ${m.school}</div>
+                <div class="text-[11px] text-slate-400">Chuẩn: <strong class="text-neonYellow">${m.cutoff.toFixed(2)}đ</strong> • Tổ hợp: <span class="${comboMatch ? 'text-neonGreen' : 'text-rose-400 font-bold'}">${m.combos.join(", ")}${comboMatch ? "" : " (Lệch tổ hợp!)"}</span></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="moveNvAspiration(${idx}, -1)" ${idx === 0 ? "disabled" : ""} class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30" title="Đưa lên ưu tiên cao hơn">↑</button>
+              <button onclick="moveNvAspiration(${idx}, 1)" ${idx === gameState.selectedNvIds.length - 1 ? "disabled" : ""} class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30" title="Đẩy xuống ưu tiên thấp hơn">↓</button>
+              <button onclick="removeNvAspiration('${id}')" class="px-2 py-1 rounded bg-rose-950 hover:bg-rose-900 text-rose-300" title="Xóa nguyện vọng">✕</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function addNvAspiration(id) {
+      if (gameState.selectedNvIds.includes(id)) return;
+      if (gameState.selectedNvIds.length >= 5) {
+        showGameToast("Đã đạt tối đa 5 nguyện vọng", "Hãy xóa bớt 1 nguyện vọng trước khi thêm nguyện vọng mới.", "warn");
+        return;
+      }
+      gameState.selectedNvIds.push(id);
+      renderNvCatalogAndOrder();
+    }
+
+    function removeNvAspiration(id) {
+      gameState.selectedNvIds = gameState.selectedNvIds.filter(x => x !== id);
+      renderNvCatalogAndOrder();
+    }
+
+    function moveNvAspiration(index, dir) {
+      const target = index + dir;
+      if (target < 0 || target >= gameState.selectedNvIds.length) return;
+      const temp = gameState.selectedNvIds[index];
+      gameState.selectedNvIds[index] = gameState.selectedNvIds[target];
+      gameState.selectedNvIds[target] = temp;
+      renderNvCatalogAndOrder();
+    }
+
+    function runNationalVirtualFilter() {
+      const resBox = document.getElementById("nvFilterResultBox");
+      if (!resBox) return;
+      if (gameState.selectedNvIds.length === 0) {
+        showGameToast("Phiếu nguyện vọng trống", "Vui lòng chọn ít nhất 1 nguyện vọng trước khi chạy lọc ảo.", "warn");
+        return;
+      }
+
+      const info = getComputedAdmissionTotal();
+      let admittedNv = null;
+      const traceLogs = [];
+
+      gameState.selectedNvIds.forEach((id, idx) => {
+        const m = nvCatalog.find(item => item.id === id);
+        if (!m) return;
+        const nvLabel = `NV${idx + 1}: ${m.major} (${m.school})`;
+        if (admittedNv) {
+          traceLogs.push(`<div class="text-slate-500">• ${nvLabel} → <em>Dừng xét (Đã trúng tuyển nguyện vọng ưu tiên cao hơn)</em></div>`);
+          return;
+        }
+        if (!info.meetsFloor15) {
+          traceLogs.push(`<div class="text-rose-400">• ${nvLabel} → <strong>Không đạt ngưỡng nguồn tuyển 15,0đ</strong> (Thông tư 95/2026/TT-BGDĐT)</div>`);
+          return;
+        }
+        if (m.reqRank === "TOT" && info.grade12Rank !== "TOT") {
+          traceLogs.push(`<div class="text-rose-400">• ${nvLabel} → <strong>Không đạt điều kiện phụ</strong> (Ngành yêu cầu học lực cả năm lớp 12 mức Tốt)</div>`);
+          return;
+        }
+        if (!m.combos.includes(info.combo)) {
+          traceLogs.push(`<div class="text-rose-400">• ${nvLabel} → <strong>Không đạt điều kiện</strong> (Ngành không xét tổ hợp ${info.combo})</div>`);
+          return;
+        }
+        if (info.total >= m.cutoff) {
+          admittedNv = { rank: idx + 1, major: m.major, school: m.school, cutoff: m.cutoff };
+          traceLogs.push(`<div class="text-neonGreen font-bold">• ${nvLabel} → ✓ TRÚNG TUYỂN CHÍNH THỨC (${info.total.toFixed(2)}đ ≥ ${m.cutoff.toFixed(2)}đ)</div>`);
+        } else {
+          traceLogs.push(`<div class="text-amber-300">• ${nvLabel} → Trượt (${info.total.toFixed(2)}đ &lt; điểm chuẩn ${m.cutoff.toFixed(2)}đ)</div>`);
+        }
+      });
+
+      gameState.jomo += 15;
+      updateHud();
+
+      resBox.classList.remove("hidden");
+      resBox.innerHTML = `
+        <div class="font-bold text-sm ${admittedNv ? "text-neonGreen" : "text-rose-400"}">
+          ${admittedNv
+            ? `🎉 CHÚC MỪNG! BẠN ĐÃ TRÚNG TUYỂN CHÍNH THỨC NV${admittedNv.rank}: ${admittedNv.major} – ${admittedNv.school}`
+            : `⚠️ CẢNH BÁO TRƯỢT TOÀN BỘ ĐỢT 1: Tổng điểm ${info.total.toFixed(2)}đ chưa đạt điều kiện nguyện vọng nào! Hãy kiểm tra ngưỡng sàn/học lực hoặc bổ sung NV An toàn.`}
+        </div>
+        <div class="text-[11px] text-slate-300">Chi tiết tính điểm tổ hợp <strong>${info.combo}</strong> (Thông tư 95/2026): Điểm 3 môn = <strong>${info.baseSum.toFixed(2)}đ</strong> + Ưu tiên KV = <strong>${info.effectivePriority.toFixed(2)}đ</strong> + Điểm cộng (trần 0,50đ) = <strong>${info.encourageBonus.toFixed(2)}đ</strong> ⇒ Tổng = <strong>${info.total.toFixed(2)}đ</strong>.</div>
+        <div class="space-y-1 pt-1 border-t border-slate-800 text-[11px]">${traceLogs.join("")}</div>
+      `;
+    }
+
+    // =========================================================================
+    // 4. ĐẤU TRƯỜNG QUY CHẾ TUYỂN SINH & TÌNH HUỐNG THỰC CHIẾN THPTQG (20 TÌNH HUỐNG)
+    // =========================================================================
+    const tacticChallenges = [
+      {
+        domain: "Tiêu chí phụ Đồng điểm (TT 95/2026)",
+        title: "Tình huống 4/20: Quy Tắc Ưu Tiên Khi Đồng Điểm Ở Cuối Danh Sách Tuyển Sinh 2027",
+        story: "Theo Thông tư số 95/2026/TT-BGDĐT (áp dụng từ mùa tuyển sinh 2027), ngành Kinh tế Quốc tế lấy điểm chuẩn 26,25 điểm. Ở cuối danh sách có 120 thí sinh cùng đạt mức 26,25 điểm trong khi chỉ tiêu chỉ còn 40 suất. Hội đồng tuyển sinh sẽ áp dụng nguyên tắc nào để xác định người trúng tuyển?",
+        ruleBasis: "Thông tư số 95/2026/TT-BGDĐT quy định rõ: Trường hợp nhiều thí sinh bằng điểm xét ở cuối danh sách, hệ thống ưu tiên xét thí sinh có thứ tự ưu tiên nguyện vọng cao hơn trên Hệ thống hỗ trợ tuyển sinh chung của Bộ GD&ĐT.",
+        trapAnalysis: "Nhiều thí sinh nghĩ đặt NV1 hay NV5 đều như nhau nên xếp lộn xộn thứ tự ưu tiên, đến khi đồng điểm ở ngưỡng cắt thì trượt vì kém thứ tự nguyện vọng.",
+        lessonLearned: "Thứ tự nguyện vọng là yếu tố quyết định thắng lợi khi đồng điểm ở cuối danh sách: Luôn đặt ngành yêu thích nhất ở vị trí ưu tiên cao nhất.",
+        choices: [
+          { text: "A. Ưu tiên thí sinh có thứ tự ưu tiên nguyện vọng cao hơn trên Hệ thống của Bộ GD&ĐT", correct: true, msg: "Chính xác tuyệt đối! Theo Thông tư 95/2026/TT-BGDĐT, khi đồng điểm ở cuối danh sách, thí sinh đặt thứ tự nguyện vọng cao hơn sẽ được ưu tiên trúng tuyển." },
+          { text: "B. Bốc thăm ngẫu nhiên trong số 120 thí sinh đồng điểm", correct: false, msg: "Sai quy chế. Tuyển sinh đại học không bao giờ sử dụng hình thức bốc thăm." },
+          { text: "C. Thí sinh nào nộp lệ phí trực tuyến sớm hơn 1 phút sẽ được ưu tiên trúng tuyển", correct: false, msg: "Không đúng. Thời điểm đóng lệ phí không phải là tiêu chí xét tuyển học thuật." },
+          { text: "D. Tuyển vượt chỉ tiêu cả 120 thí sinh để đảm bảo công bằng", correct: false, msg: "Sai quy chế. Các trường không được tự ý tuyển vượt chỉ tiêu vượt ngưỡng quy định của Bộ GD&ĐT." }
+        ]
+      },
+      {
+        domain: "Chứng chỉ Ngoại ngữ & Trần 0,50đ",
+        title: "Tình huống 5/20: Trần Điểm Cộng 0,50/30 Điểm Năm 2027 & Bẫy Bỏ Thi Ngoại Ngữ",
+        story: "Theo Thông tư số 95/2026/TT-BGDĐT, một thí sinh có chứng chỉ IELTS 7.0 và giải Khuyến khích HSG cấp tỉnh nộp hồ sơ xét tuyển đại học năm 2027. Tổng điểm cộng (gồm điểm thưởng thành tích và điểm khuyến khích chứng chỉ ngoại ngữ) mà thí sinh này được cộng tối đa là bao nhiêu, và thí sinh có nên bỏ thi môn Tiếng Anh tốt nghiệp không?",
+        ruleBasis: "Thông tư 95/2026/TT-BGDĐT khống chế tổng điểm cộng (điểm thưởng HSG quốc gia không tuyển thẳng, năng khiếu đặc biệt, điểm khuyến khích chứng chỉ ngoại ngữ/quốc tế) không vượt quá 0,50 điểm theo thang 30 trong năm 2027 và bãi bỏ hoàn toàn điểm cộng từ năm 2028.",
+        trapAnalysis: "Nhiều thí sinh vẫn lầm tưởng có IELTS 7.0 sẽ được cộng 2–3 điểm hoặc mặc định quy đổi thành 10 điểm xét đại học như các năm trước nên chủ quan bỏ thi môn Tiếng Anh.",
+        lessonLearned: "Năm 2027 tổng điểm cộng tối đa chỉ còn 0,50/30đ (và bỏ hẳn từ 2028); thí sinh vẫn nên dự thi môn Tiếng Anh tốt nghiệp để chủ động nguồn điểm xét tuyển.",
+        choices: [
+          { text: "A. Cộng dồn cả giải HSG và IELTS thành 2,50 điểm và bỏ thi môn Tiếng Anh tốt nghiệp", correct: false, msg: "Sai quy chế 2027! Thông tư 95/2026 khống chế tổng điểm cộng tối đa là 0,50/30 điểm trong năm 2027 và bãi bỏ hẳn từ năm 2028." },
+          { text: "B. Tổng điểm cộng tối đa không vượt quá 0,50/30 điểm năm 2027; vẫn nên dự thi môn Tiếng Anh tốt nghiệp để bảo toàn cơ hội xét tổ hợp", correct: true, msg: "Hoàn toàn chính xác! Nắm vững trần điểm cộng 0,50đ giúp thí sinh tránh rơi vào tâm lý chạy đua chứng chỉ tốn kém mà tập trung vào điểm thi thực chất." },
+          { text: "C. Đã có chứng chỉ IELTS thì bị cấm đăng ký nguyện vọng tổ hợp có môn Tiếng Anh", correct: false, msg: "Không bị cấm, nhưng mức điểm cộng khuyến khích bị khống chế trần 0,50/30 điểm." },
+          { text: "D. Chứng chỉ ngoại ngữ không cần nộp minh chứng trên hệ thống tuyển sinh", correct: false, msg: "Sai quy định. Thí sinh bắt buộc phải tải bản sao minh chứng chứng chỉ lên hệ thống trong thời hạn quy định." }
+        ]
+      },
+      {
+        domain: "Hồ sơ Xét Tốt nghiệp THPT",
+        title: "Tình huống 6/20: Điều Kiện Đỗ Tốt Nghiệp THPT Theo Quy Chế Mới (Tỷ Trọng 50-50)",
+        story: "Theo quy chế thi tốt nghiệp THPT mới, điểm xét tốt nghiệp (ĐXTN) được tính kết hợp giữa điểm thi tốt nghiệp 4 môn và điểm trung bình các năm học THPT theo tỷ lệ 50% – 50%. Một thí sinh đạt ĐXTN là 6,8 điểm (trên mức 5,0 điểm), nhưng môn Vật lí trong tổ hợp tự chọn bị điểm 0,75 điểm (dưới 1,0 điểm). Kết quả xét tốt nghiệp của thí sinh này là gì?",
+        ruleBasis: "Quy chế thi Tốt nghiệp THPT quy định: Thí sinh được công nhận tốt nghiệp khi tất cả các bài thi và các môn thi thành phần đều đạt trên 1,0 điểm theo thang điểm 10 và có ĐXTN từ 5,0 điểm trở lên.",
+        trapAnalysis: "Học sinh học lệch thường dồn toàn lực cho 3 môn xét đại học và bỏ bê môn còn lại trong tổ hợp 2+2, dẫn đến dính điểm liệt (≤ 1,0đ) và trượt tốt nghiệp dù điểm đại học cao.",
+        lessonLearned: "Không được chủ quan với bất kỳ môn nào trong 4 môn thi tốt nghiệp; luôn bảo đảm ngưỡng an toàn tối thiểu trên 3,0–4,0đ cho môn không dùng xét đại học.",
+        choices: [
+          { text: "A. Đỗ tốt nghiệp vì điểm xét tốt nghiệp đạt 6,8 điểm (cao hơn mức 5,0 điểm)", correct: false, msg: "Sai quy chế! Dù tổng ĐXTN trên 5,0 điểm, nhưng chỉ cần có một môn thi đạt từ 1,0 điểm trở xuống (điểm liệt) thì thí sinh vẫn không đủ điều kiện công nhận tốt nghiệp." },
+          { text: "B. Không đủ điều kiện công nhận tốt nghiệp do có môn thi bị điểm liệt (≤ 1,0 điểm)", correct: true, msg: "Chính xác! Mọi môn thi dùng để xét tốt nghiệp đều phải đạt trên 1,0 điểm và tổng ĐXTN phải đạt từ 5,0 điểm trở lên." },
+          { text: "C. Được bảo lưu điểm 3 môn cao để xét tốt nghiệp ngay trong tháng sau", correct: false, msg: "Không có kỳ thi tốt nghiệp bổ sung ngay tháng sau; thí sinh phải dự thi lại vào kỳ thi năm sau hoặc đăng ký bảo lưu theo quy định." },
+          { text: "D. Được lấy điểm học bạ môn Vật lí thay thế cho điểm thi bị liệt", correct: false, msg: "Sai quy chế. Điểm học bạ không thể thay thế điểm liệt của bài thi tốt nghiệp." }
+        ]
+      },
+      {
+        domain: "Quy chế Phòng thi Trắc nghiệm",
+        title: "Tình huống 7/20: Quy Định Về Vật Dụng Mang Vào Phòng Thi & Xử Lý Đình Chỉ",
+        story: "Khi vào phòng thi môn Toán (90 phút), thí sinh mang theo máy tính cầm tay không có chức năng soạn thảo văn bản và một chiếc đồng hồ thông minh (Smartwatch) có kết nối Bluetooth đã tắt nguồn cất trong túi quần. Giám thị kiểm tra phát hiện ra chiếc đồng hồ thông minh này. Hình thức xử lý theo quy chế thi của Bộ GD&ĐT là gì?",
+        ruleBasis: "Điều 54 Quy chế thi Tốt nghiệp THPT: Thí sinh mang vật dụng trái phép (điện thoại di động, đồng hồ thông minh, thiết bị thu phát thông tin) vào phòng thi dù đã tắt nguồn hay chưa sử dụng đều bị lập biên bản đình chỉ thi và hủy kết quả toàn bộ các bài thi.",
+        trapAnalysis: "Nhiều học sinh quen đeo đồng hồ thông minh hàng ngày và nghĩ chỉ cần tắt nguồn cất vào túi là không vi phạm quy chế.",
+        lessonLearned: "Trước khi bước qua cửa phòng thi, kiểm tra kỹ túi quần, túi áo; chỉ mang đúng bút viết, thước kẻ, compa, tẩy và máy tính bỏ túi nằm trong danh mục cho phép.",
+        choices: [
+          { text: "A. Nhắc nhở nhẹ và cho phép thí sinh tiếp tục làm bài bình thường vì đồng hồ đã tắt nguồn", correct: false, msg: "Sai quy chế! Mọi thiết bị thu phát thông tin (điện thoại, đồng hồ thông minh) dù đã tắt nguồn hay chưa sử dụng đều bị cấm tuyệt đối trong phòng thi." },
+          { text: "B. Lập biên bản đình chỉ thi môn Toán và hủy kết quả toàn bộ các bài thi của kỳ thi năm đó", correct: true, msg: "Chính xác! Mang vật dụng trái phép vào phòng thi bị xử lý đình chỉ thi và hủy kết quả cả kỳ thi, đồng nghĩa với việc mất quyền xét tốt nghiệp và xét tuyển đại học năm đó." },
+          { text: "C. Trừ 25% tổng số điểm bài thi môn Toán", correct: false, msg: "Mức trừ 25% chỉ áp dụng cho lỗi khiển trách (nhìn bài/trao đổi bài lần 1), không áp dụng cho lỗi mang thiết bị thu phát." },
+          { text: "D. Chỉ hủy điểm môn Toán, vẫn được dùng điểm các môn khác xét tuyển đại học", correct: false, msg: "Sai quy chế. Đình chỉ thi đồng nghĩa với việc hủy toàn bộ kết quả kỳ thi tốt nghiệp THPT." }
+        ]
+      },
+      {
+        domain: "Kỹ thuật Tô Phiếu OMR Mới",
+        title: "Tình huống 8/20: Quy Cách Tô Phiếu Trả Lời Trắc Nghiệm Phần III (Trả Lời Ngắn)",
+        story: "Trong đề thi Toán / Vật lí / Hóa học / Địa lí, kết quả của một câu hỏi Phần III (Trả lời ngắn) là số thập phân âm: -2,5. Trên phiếu trả lời trắc nghiệm mới gồm 4 ô ký tự cho mỗi câu Phần III, thí sinh phải điền và tô như thế nào để máy chấm quang học nhận diện chính xác?",
+        ruleBasis: "Hướng dẫn chấm thi trắc nghiệm mới của Bộ GD&ĐT: Kết quả Phần III được điền và tô kín các ô tròn tương ứng theo thứ tự từ trái sang phải (bắt đầu từ cột đầu tiên bên trái), tính cả dấu trừ (-) ở ô đầu tiên và dấu phẩy (,) thập phân.",
+        trapAnalysis: "Thói quen căn lề phải như phép tính cộng trừ tiểu học khiến nhiều thí sinh để trống ô đầu tiên bên trái, làm máy chấm quang học đọc lệch chuỗi ký tự và chấm 0 điểm.",
+        lessonLearned: "Luôn tô căn lề từ trái sang phải ở Phần III; dấu phẩy thập phân sử dụng dấu phẩy (,) theo quy chuẩn Việt Nam và tô kín hình tròn bằng bút chì đen.",
+        choices: [
+          { text: "A. Viết và tô căn lề từ trái sang phải qua 4 ô: ô 1 dấu (-), ô 2 số (2), ô 3 dấu phẩy (,), ô 4 số (5)", correct: true, msg: "Chính xác tuyệt đối! Kết quả Phần III luôn điền căn lề từ ô đầu tiên bên trái sang phải, tính cả dấu trừ (-) và dấu phẩy (,) thập phân." },
+          { text: "B. Viết căn lề sang bên phải để chừa trống ô đầu tiên", correct: false, msg: "Sai quy cách! Phiếu trả lời trắc nghiệm mới quy định điền từ trái sang phải bắt đầu từ cột đầu tiên." },
+          { text: "C. Làm tròn thành số nguyên -3 vì phiếu không có ô tô dấu phẩy", correct: false, msg: "Sai quy cách. Phiếu OMR mới có đầy đủ ô tô cho dấu trừ (-) và dấu phẩy (,) thập phân." },
+          { text: "D. Chỉ cần viết số bằng bút mực vào ô phía trên, không cần tô tròn bên dưới", correct: false, msg: "Máy chấm quang học chỉ đọc phần tô chì đen ở các ô tròn bên dưới; nếu không tô tròn sẽ bị chấm 0 điểm." }
+        ]
+      },
+      {
+        domain: "Quy trình Đăng ký & Nộp Lệ phí",
+        title: "Tình huống 9/20: Sai Lầm Khi Đăng Ký Nguyện Vọng Trực Tuyến & Nộp Lệ Phí",
+        story: "Sau khi nhập xong 5 nguyện vọng lên Hệ thống hỗ trợ tuyển sinh chung của Bộ GD&ĐT và bấm 'Lưu thông tin', thí sinh thoát khỏi trang web mà chưa thực hiện bước thanh toán lệ phí xét tuyển trực tuyến theo số lượng nguyện vọng đã đăng ký. Hậu quả của việc thiếu bước này là gì?",
+        ruleBasis: "Quy trình đăng ký xét tuyển trực tuyến Bộ GD&ĐT: Thí sinh phải thực hiện đủ 3 bước (Nhập nguyện vọng → Xác nhận mã OTP → Thanh toán lệ phí trực tuyến theo số lượng nguyện vọng) thì dữ liệu mới được đưa vào hệ thống lọc ảo.",
+        trapAnalysis: "Thí sinh thấy danh sách nguyện vọng đã hiện trên màn hình sau khi bấm Lưu nên chủ quan thoát ra, bỏ quên giai đoạn thanh toán lệ phí diễn ra ngay sau đợt điều chỉnh nguyện vọng.",
+        lessonLearned: "Kiểm tra trạng thái 'Đã thanh toán lệ phí' và chụp ảnh màn hình biên lai xác nhận trên Cổng tuyển sinh Bộ GD&ĐT trước khi kết thúc thời hạn.",
+        choices: [
+          { text: "A. Các nguyện vọng chưa được thanh toán lệ phí sẽ không được hệ thống chấp nhận đưa vào dữ liệu lọc ảo", correct: true, msg: "Chính xác! Quy trình đăng ký nguyện vọng chỉ hoàn tất hợp lệ sau khi thí sinh hoàn thành thanh toán lệ phí trực tuyến đúng thời hạn quy định." },
+          { text: "B. Được phép nộp lệ phí bằng tiền mặt vào ngày đến trường đại học nhập học", correct: false, msg: "Sai quy định. Lệ phí đăng ký nguyện vọng bắt buộc thanh toán trực tuyến trên hệ thống trước khi chạy lọc ảo." },
+          { text: "C. Hệ thống tự động giữ lại NV1 và xóa NV2 đến NV5", correct: false, msg: "Không đúng. Nếu chưa hoàn thành nghĩa vụ lệ phí theo quy định, toàn bộ giao dịch đăng ký nguyện vọng sẽ không hợp lệ." },
+          { text: "D. Vẫn được xét tuyển bình thường và chỉ bị trừ 0,1 điểm ưu tiên", correct: false, msg: "Sai quy định. Không có cơ chế trừ điểm thay cho việc nộp lệ phí đăng ký xét tuyển." }
+        ]
+      },
+      {
+        domain: "Kế hoạch Tài chính & Học bổng",
+        title: "Tình huống 10/20: Bài Toán Tối Ưu Chi Phí Đại Học & Chính Sách Nghị Định 116",
+        story: "Một học sinh có học lực Giỏi tổ hợp KHXH (Văn, Sử, Địa) nhưng điều kiện kinh tế gia đình còn khó khăn, muốn theo học bậc đại học chất lượng cao mà không tạo gánh nặng vay nợ lớn cho cha mẹ. Phương án lựa chọn nào tối ưu nhất về mặt tài chính và cơ hội nghề nghiệp?",
+        ruleBasis: "Nghị định 116/2020/NĐ-CP của Chính phủ quy định sinh viên sư phạm được Nhà nước hỗ trợ 100% tiền đóng học phí và hỗ trợ 3,63 triệu đồng/tháng để chi trả chi phí sinh hoạt trong thời gian học tập tại trường.",
+        trapAnalysis: "Nhiều học sinh giỏi có hoàn cảnh khó khăn e ngại học đại học vì sợ học phí tự chủ cao, mà chưa biết tới các chính sách đặt hàng đào tạo sư phạm hoặc tín dụng sinh viên.",
+        lessonLearned: "Kết hợp đánh giá năng lực học thuật với dự toán tài chính 4 năm; tận dụng các ngành được nhà nước hỗ trợ học phí để phát triển bền vững.",
+        choices: [
+          { text: "A. Đăng ký ngành Sư phạm tại các trường ĐH Sư phạm trọng điểm để được miễn 100% học phí và nhận hỗ trợ sinh hoạt phí 3,63 triệu đồng/tháng theo Nghị định 116", correct: true, msg: "Lựa chọn xuất sắc! Chính sách theo Nghị định 116 hỗ trợ toàn bộ học phí và chi phí sinh hoạt hàng tháng, giúp sinh viên sư phạm an tâm học tập." },
+          { text: "B. Chọn chương trình liên kết quốc tế học phí 120 triệu/năm với hy vọng vừa đi làm thêm 8 tiếng/ngày vừa tự trả học phí", correct: false, msg: "Rất rủi ro! Làm thêm quá nhiều giờ dễ dẫn đến trượt môn, nợ tín chỉ và bỏ học giữa chừng." },
+          { text: "C. Bỏ qua bậc đại học hoàn toàn dù có năng lực học tập tốt", correct: false, msg: "Lãng phí tiềm năng! Nhà nước và các trường đại học có rất nhiều chính sách miễn giảm học phí và học bổng." },
+          { text: "D. Chọn đại một ngành học phí cao ở thành phố lớn rồi tính tiếp sau năm nhất", correct: false, msg: "Thiếu hoạch định tài chính 4 năm dễ gây áp lực tâm lý nặng nề cho cả sinh viên và gia đình." }
+        ]
+      },
+      {
+        domain: "Sự cố Đề thi Phòng thi",
+        title: "Tình huống 11/20: Xử Lý Sự Cố Đề Thi Bị Mờ, Nhòe Hoặc Thiếu Trang Khi Đã Tính Giờ Làm Bài",
+        story: "Ngay sau hiệu lệnh tính giờ làm bài thi môn Vật lí (50 phút) được 3 phút, thí sinh phát hiện tờ đề thi của mình bị mờ mất số liệu ở câu 18 và thiếu mất trang cuối cùng. Thí sinh phải xử lý theo đúng quy chế thi nào để bảo toàn trọn vẹn thời gian làm bài?",
+        ruleBasis: "Quy chế thi Tốt nghiệp THPT quy định: Thí sinh phải kiểm tra kỹ số trang và chất lượng các trang in ngay khi nhận đề thi; nếu phát hiện đề thiếu trang hoặc rách, hỏng, nhòe, mờ phải báo cáo ngay cho cán bộ coi thi trong phòng thi chậm nhất 05 phút tính từ thời điểm phát đề.",
+        trapAnalysis: "Nhiều thí sinh ngại giơ tay hoặc cứ cố làm các câu đầu đến phút 20 mới báo cáo thiếu trang, lúc đó đã quá thời hạn 5 phút đầu nên không được đổi đề dự phòng và không được bù giờ.",
+        lessonLearned: "Thói quen vàng 60 giây đầu tiên khi nhận đề: Đếm đủ số trang, kiểm tra độ rõ nét của chữ in và mã đề trên tất cả các trang trước khi cầm bút làm câu 1.",
+        choices: [
+          { text: "A. Giơ tay báo cáo ngay cho cán bộ coi thi trong vòng 5 phút đầu để được đổi đề dự phòng nguyên vẹn", correct: true, msg: "Chính xác tuyệt đối! Báo cáo ngay trong 5 phút đầu giúp bạn được đổi đề chuẩn xác và bảo vệ toàn bộ quyền lợi bài thi." },
+          { text: "B. Quay sang mượn đề thi của bạn ngồi bàn bên cạnh để chép lại câu bị mờ", correct: false, msg: "Vi phạm quy chế! Tự ý trao đổi hoặc xem đề của thí sinh khác sẽ bị lập biên bản xử lý kỷ luật." },
+          { text: "C. Cứ làm hết các câu rõ chữ trước, đến 10 phút cuối giờ mới báo giám thị xin bù thêm giờ", correct: false, msg: "Sai quy chế! Nếu báo cáo sau 5 phút kể từ khi phát đề, thí sinh sẽ không được giải quyết đổi đề hay bù giờ." },
+          { text: "D. Tự ý điền đại đáp án cho các câu bị thiếu trang mà không cần báo cáo", correct: false, msg: "Làm mất oan điểm số của mình một cách không đáng có." }
+        ]
+      },
+      {
+        domain: "Xác nhận Nhập học Trực tuyến",
+        title: "Tình huống 12/20: Bẫy Bỏ Quên Bước 'Xác Nhận Nhập Học Trực Tuyến' Sau Khi Biết Điểm Chuẩn",
+        story: "Sau khi Bộ GD&ĐT công bố kết quả trúng tuyển đợt 1, thí sinh tra cứu thấy mình đã trúng tuyển NV1 vào ngành Công nghệ Thông tin – ĐH Công nghệ (ĐHQGHN). Tuy nhiên, thí sinh nghĩ chỉ cần đợi đến ngày khai giảng mang hồ sơ giấy đến trường nộp là được, nên không đăng nhập Cổng Bộ GD&ĐT để bấm 'Xác nhận nhập học trực tuyến' trong thời hạn quy định. Điều gì sẽ xảy ra?",
+        ruleBasis: "Quy chế Tuyển sinh Đại học: Tất cả thí sinh trúng tuyển (kể cả trúng tuyển thẳng) đều phải xác nhận nhập học trực tuyến trên Hệ thống của Bộ GD&ĐT trong thời hạn quy định; nếu không xác nhận coi như thí sinh từ chối nhập học.",
+        trapAnalysis: "Rất nhiều thí sinh vui mừng khi thấy tên mình trong danh sách trúng tuyển của trường đại học nhưng lại quên bước xác nhận trên Cổng chung của Bộ GD&ĐT.",
+        lessonLearned: "Đặt nhắc lịch đỏ cho mốc 'Xác nhận nhập học trực tuyến trên Cổng Bộ GD&ĐT' ngay sau khi có điểm chuẩn; chỉ khi trạng thái chuyển sang 'Đã xác nhận nhập học' mới hoàn tất.",
+        choices: [
+          { text: "A. Bị coi là từ chối nhập học và bị xóa tên khỏi danh sách trúng tuyển của trường", correct: true, msg: "Chính xác! Xác nhận nhập học trực tuyến trên Hệ thống của Bộ GD&ĐT là bước bắt buộc để giữ suất trúng tuyển chính thức." },
+          { text: "B. Vẫn được nhập học bình thường và chỉ cần nộp phạt hành chính 200.000đ", correct: false, msg: "Không có quy định nộp phạt thay thế; hệ thống tự động hủy kết quả trúng tuyển nếu quá hạn xác nhận." },
+          { text: "C. Tự động được chuyển xuống trúng tuyển NV2 để nhập học", correct: false, msg: "Sai quy chế. Khi đã trúng tuyển NV1, các nguyện vọng sau đã bị dừng xét nên bạn sẽ mất quyền nhập học đợt 1." },
+          { text: "D. Trường đại học tự động xác nhận nhập học thay cho thí sinh", correct: false, msg: "Sai quy định. Thí sinh phải tự đăng nhập bằng tài khoản cá nhân để xác nhận." }
+        ]
+      },
+      {
+        domain: "Bảo lưu Điểm thi Tốt nghiệp",
+        title: "Tình huống 13/20: Quy Định Về Bảo Lưu Điểm Thi Tốt Nghiệp THPT Cho Thí Sinh Tự Do",
+        story: "Một thí sinh dự thi Tốt nghiệp THPT năm trước nhưng chưa đỗ tốt nghiệp; trong kỳ thi đó, môn Toán đạt 7,5 điểm và môn Lịch sử đạt 6,5 điểm (không có môn nào bị điểm liệt). Năm nay thí sinh đăng ký dự thi lại để xét công nhận tốt nghiệp THPT. Thí sinh có được bảo lưu điểm môn Toán và Lịch sử của năm trước không?",
+        ruleBasis: "Quy chế thi Tốt nghiệp THPT: Thí sinh dự thi đủ các bài thi quy định nhưng chưa tốt nghiệp và không bị kỷ luật hủy kết quả thi được bảo lưu điểm các bài thi/môn thi đạt từ 5,0 điểm trở lên trong kỳ thi tổ chức ngay năm tiếp theo.",
+        trapAnalysis: "Thí sinh tự do thường nhầm lẫn giữa 'bảo lưu điểm xét tốt nghiệp THPT' (được phép nếu ≥ 5,0đ) với 'bảo lưu điểm xét tuyển đại học' (không được dùng điểm bảo lưu năm trước để xét đại học năm nay).",
+        lessonLearned: "Điểm bảo lưu từ 5,0đ trở lên chỉ dùng để xét công nhận tốt nghiệp THPT; nếu muốn xét tuyển đại học bằng điểm thi THPT năm nay, thí sinh bắt buộc phải thi lại các môn trong tổ hợp xét tuyển.",
+        choices: [
+          { text: "A. Được bảo lưu điểm Toán (7,5đ) và Lịch sử (6,5đ) để xét công nhận tốt nghiệp THPT năm nay, nhưng không dùng điểm bảo lưu này để xét tuyển đại học", correct: true, msg: "Chính xác tuyệt đối! Quy chế phân định rất rõ giá trị của điểm bảo lưu chỉ áp dụng cho xét công nhận tốt nghiệp THPT." },
+          { text: "B. Được dùng cả điểm bảo lưu năm trước để xét tuyển vào tất cả các trường đại học năm nay", correct: false, msg: "Sai quy chế! Tuyển sinh đại học bằng điểm thi THPT chỉ sử dụng kết quả của kỳ thi năm hiện tại." },
+          { text: "C. Không được bảo lưu bất kỳ môn nào, phải thi lại toàn bộ từ đầu", correct: false, msg: "Không đúng. Các môn đạt từ 5,0 điểm trở lên ở năm trước (không bị hủy kết quả) được quyền bảo lưu để xét tốt nghiệp." },
+          { text: "D. Chỉ được bảo lưu nếu điểm môn đó đạt từ 8,0 điểm trở lên", correct: false, msg: "Sai ngưỡng điểm. Ngưỡng điểm được bảo lưu xét tốt nghiệp là từ 5,0 điểm trở lên." }
+        ]
+      },
+      {
+        domain: "Xét tuyển thẳng & Giải KHKT/HSG",
+        title: "Tình huống 14/20: Tận Dụng Giải Khoa Học Kỹ Thuật & HSG Quốc Gia Trong Xét Tuyển Đại Học",
+        story: "Thí sinh đạt giải Ba cuộc thi Khoa học Kỹ thuật cấp Quốc gia (ViSEF) hoặc giải Khuyến khích Học sinh Giỏi Quốc gia. Khi đăng ký xét tuyển đại học, thí sinh cần thực hiện quy trình nào để tối đa hóa lợi thế của giải thưởng này?",
+        ruleBasis: "Quy chế Tuyển sinh Đại học: Thí sinh đạt giải Nhất, Nhì, Ba quốc gia được xét tuyển thẳng vào ngành phù hợp với môn thi/nội dung đề tài; thí sinh đạt giải Khuyến khích hoặc giải KHKT được ưu tiên xét tuyển hoặc cộng điểm thưởng theo Đề án của từng trường, đồng thời vẫn phải nhập nguyện vọng lên Cổng Bộ GD&ĐT.",
+        trapAnalysis: "Nhiều thí sinh đoạt giải quốc gia tưởng rằng chỉ cần nộp giấy chứng nhận cho trường đại học là xong mà quên nhập nguyện vọng lên Hệ thống chung của Bộ GD&ĐT trong đợt xét tuyển chung.",
+        lessonLearned: "Dù trúng tuyển thẳng hay ưu tiên xét tuyển, thí sinh vẫn phải đăng ký nguyện vọng lên Cổng Bộ GD&ĐT đúng lịch để hệ thống xác nhận trúng tuyển chính thức.",
+        choices: [
+          { text: "A. Nộp hồ sơ minh chứng giải thưởng cho trường đại học theo lịch xét tuyển thẳng/ưu tiên VÀ vẫn phải đăng ký nguyện vọng lên Cổng Bộ GD&ĐT", correct: true, msg: "Hoàn toàn chính xác! Kết hợp minh chứng giải thưởng đúng ngành phù hợp và xác nhận trên Cổng chung Bộ GD&ĐT giúp bạn chắc chắn trúng tuyển." },
+          { text: "B. Được tuyển thẳng vào bất kỳ ngành nào của mọi trường đại học mà không cần đúng lĩnh vực đề tài/môn thi", correct: false, msg: "Sai quy chế. Xét tuyển thẳng yêu cầu ngành đăng ký phải phù hợp với môn đoạt giải hoặc lĩnh vực đề tài KHKT." },
+          { text: "C. Được miễn thi Tốt nghiệp THPT và tự động cấp bằng tốt nghiệp mà không cần dự thi", correct: false, msg: "Sai quy chế. Chỉ thí sinh được triệu tập tham gia đội tuyển Olympic quốc tế mới được miễn thi tất cả các bài thi tốt nghiệp THPT." },
+          { text: "D. Không cần khai báo trên hệ thống tuyển sinh chung", correct: false, msg: "Sai quy định. Mọi thí sinh trúng tuyển thẳng đều phải cập nhật thông tin trên hệ thống của Bộ GD&ĐT." }
+        ]
+      },
+      {
+        domain: "Phân bổ Thời gian Làm bài 2+2",
+        title: "Tình huống 15/20: Chiến Thuật Quản Trị Quỹ Thời Gian 50 Phút Đề Thi Trắc Nghiệm 3 Phần",
+        story: "Đề thi Vật lí / Hóa học / Địa lí gồm 28 câu làm trong 50 phút (Phần I: 18 câu trắc nghiệm 4,5đ; Phần II: 4 câu Đúng/Sai lũy tiến 4,0đ; Phần III: 6 câu Trả lời ngắn 1,5đ). Còn 12 phút cuối giờ, thí sinh đã làm xong Phần I và II nhưng đang kẹt ở 2 câu vận dụng cao Phần III (mỗi câu 0,25đ) và chưa kiểm tra lại phiếu tô OMR. Phương án hành động nào tối ưu điểm số nhất?",
+        ruleBasis: "Cơ cấu điểm đề thi trắc nghiệm 50 phút: Phần II (Đúng/Sai 4 câu) chiếm tới 4,0 điểm (mỗi ý đúng nâng điểm lũy tiến rất cao), trong khi mỗi câu Phần III chỉ chiếm 0,25 điểm. Một lỗi tô nhầm ô trên phiếu OMR có thể làm mất từ 0,25 đến 1,0 điểm.",
+        trapAnalysis: "Tâm lý cầu toàn khiến nhiều thí sinh sa lầy 15 phút cuối vào 1–2 câu vận dụng cao (0,25đ) mà bỏ quên việc rà soát phiếu OMR, dẫn đến tô lệch dòng hoặc bỏ sót ý ở Phần II.",
+        lessonLearned: "Áp dụng quy tắc 'Bảo vệ điểm chắc trước – Săn điểm khó sau': Dành 5–7 phút cuối cùng để rà soát toàn bộ phiếu trả lời trắc nghiệm OMR (đặc biệt là mã đề, số báo danh và căn lề trái Phần III).",
+        choices: [
+          { text: "A. Dừng sa lầy ở câu khó, dành 6 phút kiểm tra kỹ mã đề, số báo danh và đối chiếu toàn bộ đáp án đã tô trên phiếu OMR, sau đó mới thử giải nhanh 2 câu còn lại", correct: true, msg: "Tư duy chiến thuật xuất sắc! Bảo vệ an toàn 9,5 điểm đã làm trên phiếu OMR luôn hiệu quả hơn đánh đổi rủi ro cho 0,5 điểm vận dụng cao." },
+          { text: "B. Dồn toàn bộ 12 phút cuối để giải bằng được 1 câu vận dụng cao Phần III, hết giờ mới vội vàng tô phiếu", correct: false, msg: "Cực kỳ nguy hiểm! Khi giám thị hô hết giờ, thí sinh không được phép cầm bút tô tiếp, dễ dẫn đến phiếu trắng hoặc tô lệch." },
+          { text: "C. Bỏ trống các ô chưa làm được ở Phần I và Phần II mà không tô phương án dự đoán", correct: false, msg: "Sai chiến thuật. Với trắc nghiệm không trừ điểm câu sai, không bao giờ được để trống bất kỳ câu nào trên phiếu OMR." },
+          { text: "D. Tẩy xóa mạnh tay nhiều lần trên phiếu OMR làm rách giấy để sửa lại câu Phần I", correct: false, msg: "Làm rách hoặc nhàu nát phiếu OMR sẽ khiến máy chấm quang học không thể nhận diện bài làm." }
+        ]
+      },
+      {
+        domain: "Thủ tục Dự thi & Giấy tờ Tùy thân",
+        title: "Tình huống 16/20: Xử Lý Sự Cố Quên Giấy Báo Dự Thi Hoặc Căn Cước Công Dân Trước Giờ Gọi Vào Phòng Thi",
+        story: "Buổi sáng ngày thi môn Ngữ văn, còn 15 phút nữa là đến giờ gọi thí sinh vào phòng thi, thí sinh phát hiện mình để quên Giấy báo dự thi (hoặc Căn cước công dân) ở nhà cách điểm thi 8 km. Nếu quay về nhà lấy thì chắc chắn sẽ muộn giờ tính giờ làm bài quá 15 phút. Thí sinh phải xử lý theo đúng quy chế thi nào?",
+        ruleBasis: "Quy chế thi Tốt nghiệp THPT: Trường hợp thí sinh bị mất hoặc quên Giấy báo dự thi/Căn cước công dân trong buổi thi, thí sinh phải báo cáo ngay cho Trưởng Điểm thi để lập biên bản xác nhận nhân thân (đối chiếu ảnh trong danh sách phòng thi) và làm giấy cam đoan để được dự thi bình thường; buổi thi sau bổ sung giấy tờ.",
+        trapAnalysis: "Sự hoảng loạn khiến nhiều thí sinh tự ý phóng xe quay về nhà lấy giấy tờ, dẫn đến đi muộn quá 15 phút sau hiệu lệnh tính giờ làm bài và bị cấm thi buổi đó.",
+        lessonLearned: "Tuyệt đối không tự ý rời điểm thi khi đã sát giờ gọi tên; báo ngay cho cán bộ coi thi hoặc Trưởng Điểm thi để lập giấy cam đoan dự thi đúng giờ.",
+        choices: [
+          { text: "A. Bình tĩnh báo cáo ngay cho Cán bộ coi thi và Trưởng Điểm thi để viết giấy cam đoan, đối chiếu ảnh gốc và vào phòng thi đúng giờ", correct: true, msg: "Chính xác! Trưởng Điểm thi có thẩm quyền xác nhận nhân thân qua hồ sơ ảnh gốc và cho phép thí sinh làm giấy cam đoan để không lỡ buổi thi." },
+          { text: "B. Tự ý lấy xe máy chạy về nhà lấy giấy tờ dù biết sẽ đến muộn 25 phút sau khi phát đề", correct: false, msg: "Cực kỳ sai lầm! Thí sinh đến chậm quá 15 phút sau khi có hiệu lệnh tính giờ làm bài sẽ không được dự thi buổi thi đó." },
+          { text: "C. Bỏ buổi thi môn Ngữ văn sáng hôm đó và xin thi bù vào buổi chiều", correct: false, msg: "Không có lịch thi bù cho thí sinh tự ý bỏ thi; vắng thi môn Ngữ văn sẽ mất điều kiện xét tốt nghiệp." },
+          { text: "D. Nhờ bạn bè chụp ảnh thẻ dự thi gửi qua điện thoại rồi mang điện thoại vào phòng thi trình giám thị", correct: false, msg: "Vi phạm nghiêm trọng quy chế! Mang điện thoại vào phòng thi sẽ bị đình chỉ thi ngay lập tức." }
+        ]
+      },
+      {
+        domain: "Thời điểm Rời Phòng thi Trắc nghiệm",
+        title: "Tình huống 17/20: Quy Định Về Thời Gian Nộp Bài & Rời Khỏi Phòng Thi Trắc Nghiệm",
+        story: "Trong buổi thi bài thi tự chọn Vật lí (thời gian làm bài 50 phút), một thí sinh làm xong bài sau 30 phút và muốn nộp bài, đề thi, giấy nháp để ra về sớm vì nhà có việc bận. Cán bộ coi thi có cho phép thí sinh rời khỏi phòng thi ngay tại phút thứ 30 không?",
+        ruleBasis: "Quy chế thi Tốt nghiệp THPT: Đối với buổi thi trắc nghiệm, thí sinh KHÔNG được phép rời khỏi phòng thi trong suốt thời gian làm bài và cả thời gian thu bài. (Chỉ buổi thi tự luận Ngữ văn mới được rời phòng thi và khu vực thi sau 2/3 thời gian làm bài).",
+        trapAnalysis: "Học sinh thường nhầm quy định 'ra về sau 2/3 thời gian làm bài' của môn tự luận Ngữ văn sang các bài thi trắc nghiệm 50 phút và 90 phút.",
+        lessonLearned: "Trong mọi môn thi trắc nghiệm (Toán, Ngoại ngữ và 2 môn tự chọn), thí sinh phải ngồi tại chỗ cho đến khi hết giờ, cán bộ coi thi thu đủ phiếu OMR, đề thi và cho phép mới được rời phòng.",
+        choices: [
+          { text: "A. Không được phép! Thí sinh thi trắc nghiệm không được rời khỏi phòng thi trong suốt thời gian làm bài", correct: true, msg: "Chính xác tuyệt đối! Quy định này nhằm ngăn chặn tuyệt đối nguy cơ lọt đề thi trắc nghiệm ra bên ngoài trước khi hết giờ." },
+          { text: "B. Được phép nộp bài và ra về ngay sau khi đã làm được 2/3 thời gian (tức phút thứ 34)", correct: false, msg: "Sai quy chế! Quy định 2/3 thời gian chỉ áp dụng cho bài thi tự luận (Ngữ văn), không áp dụng cho bài thi trắc nghiệm." },
+          { text: "C. Được phép tự cầm đề thi và giấy nháp mang ra khỏi phòng thi trước khi hết giờ", correct: false, msg: "Vi phạm quy chế! Tự ý mang đề thi ra khỏi phòng thi khi chưa hết giờ là hành vi làm lộ đề thi." },
+          { text: "D. Chỉ cần để lại phiếu OMR trên bàn và tự ý bước ra ngoài hành lang đứng đợi", correct: false, msg: "Vi phạm kỷ luật phòng thi; thí sinh phải ngồi đúng vị trí cho đến khi cán bộ coi thi kiểm đếm xong bài thi." }
+        ]
+      },
+      {
+        domain: "Đăng ký Phương thức trên Cổng Bộ",
+        title: "Tình huống 18/20: Phân Biệt Phương Thức Xét Tuyển ĐGNL / ĐGTD / V-SAT Trên Cổng Bộ GD&ĐT",
+        story: "Thí sinh đã có kết quả thi Đánh giá Năng lực (ĐGNL) hoặc V-SAT đạt điểm cao và muốn dùng kết quả này để xét tuyển vào ngành Công nghệ Thông tin – Trường ĐH B. Khi đăng ký nguyện vọng trên Hệ thống chung của Bộ GD&ĐT, thí sinh cần thao tác như thế nào cho đúng?",
+        ruleBasis: "Quy chế Tuyển sinh Đại học: Thí sinh chỉ cần đăng ký đúng Mã trường và Mã ngành trên Cổng chung của Bộ GD&ĐT (không cần chọn mã phương thức rườm rà nếu hệ thống tự động tích hợp dữ liệu); hệ thống lọc ảo sẽ tự động đối chiếu tất cả các phương thức thí sinh có dữ liệu hợp lệ tại ngành đó và chọn phương thức có kết quả cao nhất/có lợi nhất.",
+        trapAnalysis: "Nhiều thí sinh lo lắng không biết chọn phương thức nào trên Cổng Bộ GD&ĐT hoặc quên nộp lệ phí/minh chứng điểm thi riêng cho trường đại học theo lịch hướng dẫn.",
+        lessonLearned: "Kiểm tra mục 'Tra cứu thông tin cá nhân & Minh chứng điểm xét tuyển' trên Cổng Bộ GD&ĐT để bảo đảm điểm ĐGNL/V-SAT/Học bạ đã được cập nhật lên hệ thống trước ngày chạy lọc ảo.",
+        choices: [
+          { text: "A. Kiểm tra minh chứng điểm thi riêng đã cập nhật lên hệ thống, đăng ký đúng Mã trường – Mã ngành theo thứ tự ưu tiên trên Cổng Bộ GD&ĐT để hệ thống tự động xét phương thức có lợi nhất", correct: true, msg: "Chính xác! Hệ thống của Bộ GD&ĐT tích hợp dữ liệu đa phương thức và tự động xét tuyển theo phương thức có lợi nhất cho thí sinh ở từng nguyện vọng." },
+          { text: "B. Chỉ cần có điểm ĐGNL là trường đại học tự động gọi nhập học mà không cần đăng ký trên Cổng Bộ GD&ĐT", correct: false, msg: "Sai quy chế! Mọi phương thức xét tuyển (trừ đào tạo quốc tế liên kết nước ngoài cấp bằng) đều phải đăng ký trên Hệ thống của Bộ GD&ĐT." },
+          { text: "C. Bắt buộc phải hủy kết quả thi Tốt nghiệp THPT mới được dùng điểm ĐGNL/V-SAT", correct: false, msg: "Không đúng. Thí sinh được sử dụng đồng thời nhiều nguồn điểm để hệ thống chọn kết quả tối ưu nhất." },
+          { text: "D. Được phép đăng ký cùng một mã ngành lặp lại 5 lần ở NV1, NV2, NV3, NV4, NV5", correct: false, msg: "Hệ thống không cho phép đăng ký trùng lặp cùng một mã ngành của một trường nhiều lần." }
+        ]
+      },
+      {
+        domain: "Xét tuyển Bổ sung Đợt 2",
+        title: "Tình huống 19/20: Quy Tắc Tham Gia Xét Tuyển Bổ Sung (Đợt 2) Của Các Trường Đại Học",
+        story: "Sau đợt xét tuyển 1, một thí sinh đã trúng tuyển NV3 (ngành an toàn) trên Cổng Bộ GD&ĐT nhưng cảm thấy chưa ưng ý nên không bấm 'Xác nhận nhập học trực tuyến' và muốn nộp hồ sơ xét tuyển bổ sung (Đợt 2) vào một trường đại học khác còn chỉ tiêu. Thí sinh này có được phép tham gia xét tuyển bổ sung Đợt 2 không?",
+        ruleBasis: "Quy chế Tuyển sinh Đại học: Thí sinh đã trúng tuyển Đợt 1 nhưng KHÔNG xác nhận nhập học trực tuyến trên Hệ thống của Bộ GD&ĐT trong thời hạn quy định thì hệ thống xem như từ chối nhập học, và thí sinh ĐƯỢC PHÉP tham gia xét tuyển bổ sung (Đợt 2) trực tiếp tại các trường còn chỉ tiêu. Ngược lại, nếu đã bấm 'Xác nhận nhập học' Đợt 1 thì không được xét tuyển bổ sung.",
+        trapAnalysis: "Nhiều thí sinh không biết rằng một khi đã bấm nút 'Xác nhận nhập học' Đợt 1 thì khóa toàn bộ quyền xét tuyển bổ sung ở các trường khác; ngược lại, nếu từ chối nhập học Đợt 1 thì phải chấp nhận rủi ro Đợt 2 nhiều trường top đầu đã tuyển đủ chỉ tiêu.",
+        lessonLearned: "Cân nhắc cực kỳ kỹ lưỡng trước khi từ chối xác nhận nhập học Đợt 1, vì chỉ tiêu xét tuyển bổ sung Đợt 2 thường chỉ còn ở một số ngành/trường nhất định và điểm chuẩn có thể cao hơn Đợt 1.",
+        choices: [
+          { text: "A. Được phép tham gia xét tuyển bổ sung Đợt 2 nếu không xác nhận nhập học Đợt 1, nhưng cần cân nhắc rủi ro vì nhiều trường top đã đủ chỉ tiêu", correct: true, msg: "Hoàn toàn chính xác! Hiểu rõ mối quan hệ giữa nút 'Xác nhận nhập học' và quyền xét tuyển bổ sung giúp thí sinh tránh rơi vào tình thế tiến thoái lưỡng nan." },
+          { text: "B. Cứ bấm 'Xác nhận nhập học' Đợt 1 để giữ chỗ trước, sau đó nộp thêm hồ sơ xét tuyển bổ sung Đợt 2 ở trường khác", correct: false, msg: "Sai quy chế! Khi đã xác nhận nhập học Đợt 1 trên hệ thống Bộ GD&ĐT, thí sinh không được tham gia xét tuyển bổ sung ở nơi khác." },
+          { text: "C. Nếu trượt toàn bộ Đợt 1 thì thí sinh bị cấm tham gia xét tuyển bổ sung Đợt 2", correct: false, msg: "Không đúng. Thí sinh chưa trúng tuyển Đợt 1 hoàn toàn có quyền nộp hồ sơ xét tuyển bổ sung Đợt 2." },
+          { text: "D. Xét tuyển bổ sung Đợt 2 không yêu cầu ngưỡng đảm bảo chất lượng đầu vào (điểm sàn)", correct: false, msg: "Sai quy chế. Điểm nhận hồ sơ xét tuyển bổ sung không được thấp hơn điểm chuẩn Đợt 1." }
+        ]
+      },
+      {
+        domain: "Chiến lược Chuyển ngành / Song bằng",
+        title: "Tình huống 20/20: Lộ Trình Học Song Bằng (Bằng Kép) Hoặc Chuyển Ngành Sau Năm Nhất Đại Học",
+        story: "Một thí sinh đam mê lĩnh vực Kinh tế Số / Công nghệ Thông tin nhưng điểm thi thiếu 0,5 điểm so với ngành top 1 của trường đại học mục tiêu, nên trúng tuyển vào một ngành gần (cùng khối kiến thức cơ sở) trong chính trường đại học đó. Giải pháp học thuật nào thông minh và đúng quy chế đào tạo đại học giúp thí sinh vẫn chạm tới mục tiêu nghề nghiệp?",
+        ruleBasis: "Quy chế Đào tạo Trình độ Đại học của Bộ GD&ĐT: Sinh viên có học lực từ Khá trở lên sau năm học thứ nhất có quyền đăng ký học cùng lúc hai chương trình (Song bằng / Bằng kép) hoặc xin chuyển sang ngành đào tạo khác cùng nhóm ngành nếu đáp ứng điều kiện điểm chuẩn đầu vào và chỉ tiêu của trường.",
+        trapAnalysis: "Tâm lý 'được ăn cả, ngã về không' khiến nhiều học sinh bỏ lỡ môi trường đại học chất lượng cao chỉ vì thiếu 0,25–0,5 điểm ở ngành hot nhất, mà không biết cơ chế học song bằng rất linh hoạt ở bậc đại học.",
+        lessonLearned: "Chiến lược 'Vào trường trước – Mở rộng chuyên ngành sau': Chọn ngành gần có điểm chuẩn vừa sức trong trường đại học mơ ước, giữ GPA năm nhất ≥ 2,8/4,0 để đăng ký học song bằng.",
+        choices: [
+          { text: "A. Nhập học ngành gần trong trường đại học mục tiêu, nỗ lực đạt GPA loại Khá/Giỏi năm nhất để đăng ký học Song bằng (Bằng kép) chuyên ngành mơ ước", correct: true, msg: "Tư duy chiến lược bậc thầy! Nhiều môn đại cương năm nhất được bảo lưu tín chỉ chéo, giúp sinh viên tốt nghiệp với 2 tấm bằng cử nhân chất lượng cao." },
+          { text: "B. Bỏ học đại học ngay từ tuần đầu tiên mà không tìm hiểu quy chế đào tạo tín chỉ của nhà trường", correct: false, msg: "Quyết định cảm tính, lãng phí cơ hội phát triển trong môi trường học thuật chất lượng cao." },
+          { text: "C. Tự ý sang ngồi học lớp của ngành khác mà không đăng ký tín chỉ với Phòng Đào tạo", correct: false, msg: "Sai quy chế đào tạo đại học; sinh viên bắt buộc phải đăng ký chương trình thứ hai chính thức theo quy định của trường." },
+          { text: "D. Quy chế đại học cấm tuyệt đối việc sinh viên học cùng lúc hai ngành đào tạo", correct: false, msg: "Sai quy chế. Học cùng lúc hai chương trình (song bằng) là quyền lợi chính đáng của sinh viên đáp ứng đủ điều kiện học lực." }
+        ]
+      }
+    ];
+
+    let currentRpgIdx = 0;
+    let tacticArenaScore = 0;
+    let tacticAnsweredMap = {};
+    let tacticTimerInterval = null;
+    let tacticTimeLeft = 30;
+
+    function startTacticTimer() {
+      if (tacticTimerInterval) clearInterval(tacticTimerInterval);
+      tacticTimeLeft = 30;
+      const el = document.getElementById("tacticTimerDisplay");
+      if (el) el.textContent = `${tacticTimeLeft}s`;
+
+      tacticTimerInterval = setInterval(() => {
+        if (tacticAnsweredMap[currentRpgIdx] !== undefined) {
+          clearInterval(tacticTimerInterval);
+          return;
+        }
+        if (tacticTimeLeft > 0) {
+          tacticTimeLeft--;
+          if (el) el.textContent = `${tacticTimeLeft}s`;
+        } else {
+          clearInterval(tacticTimerInterval);
+          if (el) el.textContent = "Hết giờ!";
+        }
+      }, 1000);
+    }
+
+    function jumpToRpgScenario(idx) {
+      currentRpgIdx = idx;
+      renderRpgScenario();
+    }
+
+    function renderRpgScenario() {
+      const sc = tacticChallenges[currentRpgIdx];
+      document.getElementById("rpgChapterTitle").textContent = sc.title;
+      document.getElementById("rpgDomainBadge").textContent = `Chuyên đề: ${sc.domain}`;
+      document.getElementById("rpgStepBadge").textContent = `Câu ${currentRpgIdx + 1} / ${tacticChallenges.length}`;
+      document.getElementById("rpgStoryBox").textContent = sc.story;
+      document.getElementById("rpgFeedbackBox").classList.add("hidden");
+
+      const pillsBox = document.getElementById("rpgQuickPills");
+      if (pillsBox) {
+        pillsBox.innerHTML = tacticChallenges.map((item, i) => {
+          const st = tacticAnsweredMap[i];
+          let cls = "bg-slate-900 border-slate-700 text-slate-400";
+          if (i === currentRpgIdx) cls = "bg-cyan-600 border-cyan-400 text-slate-950 font-black";
+          else if (st === true) cls = "bg-emerald-950 border-emerald-500/50 text-emerald-400 font-bold";
+          else if (st === false) cls = "bg-rose-950 border-rose-500/50 text-rose-400 font-bold";
+
+          return `<button onclick="jumpToRpgScenario(${i})" class="px-2.5 py-1 rounded-lg border text-[11px] font-mono transition ${cls}">TH ${i + 1}</button>`;
+        }).join("");
+      }
+
+      document.getElementById("rpgChoicesBox").innerHTML = sc.choices.map((ch, idx) => `
+        <button onclick="chooseRpgOption(${idx})" class="p-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500 text-left text-xs sm:text-sm text-slate-100 font-medium transition">
+          ${ch.text}
+        </button>
+      `).join("");
+
+      startTacticTimer();
+    }
+
+    function chooseRpgOption(idx) {
+      if (tacticTimerInterval) clearInterval(tacticTimerInterval);
+      const sc = tacticChallenges[currentRpgIdx];
+      const ch = sc.choices[idx];
+      const firstAttempt = tacticAnsweredMap[currentRpgIdx] === undefined;
+
+      if (ch.correct) {
+        if (firstAttempt) {
+          tacticArenaScore = Math.min(200, tacticArenaScore + 10);
+          gameState.jomo += 15;
+          gameState.focus += 5;
+        }
+        tacticAnsweredMap[currentRpgIdx] = true;
+      } else {
+        if (firstAttempt) {
+          tacticAnsweredMap[currentRpgIdx] = false;
+          gameState.stress += 5;
+        }
+      }
+      document.getElementById("tacticScoreDisplay").textContent = tacticArenaScore;
+      updateHud();
+
+      const completedCount = Object.keys(tacticAnsweredMap).length;
+      const isAllDone = completedCount === tacticChallenges.length && currentRpgIdx === tacticChallenges.length - 1;
+
+      const fb = document.getElementById("rpgFeedbackBox");
+      fb.classList.remove("hidden");
+      fb.innerHTML = `
+        <div class="font-bold text-sm ${ch.correct ? "text-neonGreen" : "text-rose-400"}">${ch.msg}</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1 text-[11px]">
+          <div class="p-3 rounded-xl bg-slate-900 border border-cyan-500/30 space-y-1">
+            <div class="font-bold text-neonCyan uppercase">1. Căn cứ Quy chế Bộ GD&ĐT</div>
+            <p class="text-slate-300 leading-relaxed">${sc.ruleBasis}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900 border border-rose-500/30 space-y-1">
+            <div class="font-bold text-rose-400 uppercase">2. Phân tích Bẫy & Sai lầm</div>
+            <p class="text-slate-300 leading-relaxed">${sc.trapAnalysis}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900 border border-emerald-500/30 space-y-1">
+            <div class="font-bold text-neonGreen uppercase">3. Bài học Kinh nghiệm</div>
+            <p class="text-slate-300 leading-relaxed">${sc.lessonLearned}</p>
+          </div>
+        </div>
+        ${isAllDone ? `<div class="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-200"><strong>Tổng kết Đấu trường Quy chế THPTQG:</strong> Bạn đã hoàn thành cả 20 tình huống thực chiến với tổng điểm <strong>${tacticArenaScore}/200 điểm</strong>!</div>` : ""}
+        <div class="flex flex-wrap gap-2">
+          <button onclick="nextRpgScenario()" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-xs">
+            ${currentRpgIdx < tacticChallenges.length - 1 ? "Sang tình huống tiếp theo →" : "Luyện lại từ Tình huống 1"}
+          </button>
+        </div>
+      `;
+    }
+
+    function nextRpgScenario() {
+      currentRpgIdx = (currentRpgIdx + 1) % tacticChallenges.length;
+      renderRpgScenario();
+    }
+
+    // =========================================================================
+    // 5. MINIGAME ARCADE: LÁ CHẮN CHỐNG NHIỄU THÔNG TIN
+    // =========================================================================
+    let arcadeAnimId = null;
+    let arcadeScore = 0;
+
+    function startArcadeMiniGame() {
+      const canvas = document.getElementById("arcadeCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.parentElement.clientWidth || 700;
+      canvas.height = canvas.parentElement.clientHeight || 360;
+
+      if (arcadeAnimId) cancelAnimationFrame(arcadeAnimId);
+      arcadeScore = 0;
+      document.getElementById("arcadeScoreVal").textContent = arcadeScore;
+
+      let paddleX = canvas.width / 2 - 55;
+      const paddleW = 110;
+      const paddleH = 14;
+      const items = [];
+      let frame = 0;
+
+      const labelsGood = ["Ôn đề 2+2", "Ngủ đủ giấc", "Học bạ 8.5+", "Bình tĩnh", "Đúng tổ hợp"];
+      const labelsBad = ["Tin đồn điểm", "Thi 5 kỳ riêng", "Học lệch", "Hoảng loạn", "Bẫy ngành hot"];
+
+      const moveHandler = (clientX) => {
+        const rect = canvas.getBoundingClientRect();
+        paddleX = Math.max(0, Math.min(canvas.width - paddleW, clientX - rect.left - paddleW / 2));
+      };
+      canvas.onmousemove = (e) => moveHandler(e.clientX);
+      canvas.ontouchmove = (e) => {
+        if (e.touches[0]) moveHandler(e.touches[0].clientX);
+      };
+
+      function loop() {
+        frame++;
+        ctx.fillStyle = "#090d16";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (frame % 55 === 0) {
+          const isGood = Math.random() > 0.45;
+          items.push({
+            x: Math.random() * (canvas.width - 100) + 50,
+            y: -20,
+            vy: 2.3 + Math.random() * 1.4,
+            isGood,
+            label: isGood ? labelsGood[Math.floor(Math.random() * labelsGood.length)] : labelsBad[Math.floor(Math.random() * labelsBad.length)]
+          });
+        }
+
+        // Paddle
+        ctx.fillStyle = "#22d3ee";
+        ctx.beginPath();
+        ctx.roundRect(paddleX, canvas.height - 26, paddleW, paddleH, 8);
+        ctx.fill();
+
+        for (let i = items.length - 1; i >= 0; i--) {
+          const it = items[i];
+          it.y += it.vy;
+
+          ctx.fillStyle = it.isGood ? "#10b981" : "#f43f5e";
+          ctx.beginPath();
+          ctx.roundRect(it.x - 45, it.y - 12, 90, 24, 12);
+          ctx.fill();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 11px Be Vietnam Pro, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(it.label, it.x, it.y + 4);
+
+          if (it.y + 12 >= canvas.height - 26 && it.x >= paddleX && it.x <= paddleX + paddleW) {
+            if (it.isGood) {
+              arcadeScore += 10;
+              gameState.jomo += 2;
+            } else {
+              arcadeScore = Math.max(0, arcadeScore - 5);
+            }
+            document.getElementById("arcadeScoreVal").textContent = arcadeScore;
+            updateHud();
+            items.splice(i, 1);
+          } else if (it.y > canvas.height + 20) {
+            items.splice(i, 1);
+          }
+        }
+
+        arcadeAnimId = requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    // Boot default exam on page load
+    window.onload = function () {
+      updateHud();
+      loadCbtExam("TOAN");
+    };
+  </script>
+</body>
+</html>
